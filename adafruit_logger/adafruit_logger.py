@@ -40,7 +40,7 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 
 """
-#pylint:disable=redefined-outer-name
+#pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
 
 # imports
 
@@ -49,25 +49,33 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
 
 import time
 
-levels = [(0,  'NOTSET'),
+LEVELS = [(00, 'NOTSET'),
           (10, 'DEBUG'),
           (20, 'INFO'),
           (30, 'WARNING'),
           (40, 'ERROR'),
           (50, 'CRITICAL')]
 
-for value, name in levels:
+for value, name in LEVELS:
     globals()[name] = value
 
 def level_for(value):
-    for i in range(len(levels)):
-        if value < levels[i][0]:
-            return levels[i-1][1]
-    return levels[0][1]
+    """Convert a numberic level to the most appropriate name.
+    value -- a numeric level
+    """
+    for i in range(len(LEVELS)):
+        if value < LEVELS[i][0]:
+            return LEVELS[i-1][1]
+    return LEVELS[0][1]
 
 class LoggingHandler(object):
+    """Abstract logging message handler."""
 
     def format(self, level, msg):
+        """Generate a timestamped message.
+        level -- the logging level
+        msg -- the message to log
+        """
         now = time.localtime()
         time_vals = (now.tm_year, now.tm_mon, now.tm_mday,
                      now.tm_hour, now.tm_min, now.tm_sec)
@@ -75,11 +83,20 @@ class LoggingHandler(object):
         return '{0}: {1} - {2}'.format(timestamp, level_for(level), msg)
 
     def emit(self, level, msg):
+        """Send a message where it should go.
+        Place holder for subclass implementations.
+        """
         raise NotImplementedError()
 
+
 class PrintHandler(LoggingHandler):
+    """Send logging messages to the console by using print."""
 
     def emit(self, level, msg):
+        """Send a message to teh console.
+        level -- the logging level
+        msg -- the message to log
+        """
         print(self.format(level, msg))
 
 
@@ -87,8 +104,12 @@ class PrintHandler(LoggingHandler):
 #pylint:disable=undefined-variable
 
 class Logger(object):
+    """Provide a logging api."""
 
     def __init__(self, handler=None):
+        """Create an instance.
+        handler -- what to use to output messages. Defaults to a PrintHandler.
+        """
         self._level = NOTSET
         if handler is None:
             self._handler = PrintHandler()
@@ -97,27 +118,54 @@ class Logger(object):
 
     @property
     def level(self):
+        """Get the level."""
         return self._level
 
     @level.setter
     def level(self, value):
+        """Set the level."""
         self._level = value
 
     def log(self, level, format_string, *args):
+        """Log a message.
+        level -- the priority level at which to log
+        format_string -- the core mesage string with embedded formatting directives
+        args -- arguments  format_string.format(), can be empty
+        """
         if self._level != NOTSET and level >= self._level:
             self._handler.emit(level, format_string.format(*args))
 
     def debug(self, format_string, *args):
+        """Log a debug message.
+        format_string -- the core mesage string with embedded formatting directives
+        args -- arguments  format_string.format(), can be empty
+        """
         self.log(DEBUG, format_string, *args)
 
     def info(self, format_string, *args):
+        """Log a info message.
+        format_string -- the core mesage string with embedded formatting directives
+        args -- arguments  format_string.format(), can be empty
+        """
         self.log(INFO, format_string, *args)
 
     def warning(self, format_string, *args):
+        """Log a warning message.
+        format_string -- the core mesage string with embedded formatting directives
+        args -- arguments  format_string.format(), can be empty
+        """
         self.log(WARNING, format_string, *args)
 
     def error(self, format_string, *args):
+        """Log a error message.
+        format_string -- the core mesage string with embedded formatting directives
+        args -- arguments  format_string.format(), can be empty
+        """
         self.log(ERROR, format_string, *args)
 
     def critical(self, format_string, *args):
+        """Log a critical message.
+        format_string -- the core mesage string with embedded formatting directives
+        args -- arguments  format_string.format(), can be empty
+        """
         self.log(CRITICAL, format_string, *args)

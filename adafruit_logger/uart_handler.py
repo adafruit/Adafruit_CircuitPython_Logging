@@ -57,8 +57,13 @@ Implementation Notes
 from adafruit_logger import LoggingHandler
 
 class UartHandler(LoggingHandler):
+    """Send logging output to a serial port."""
 
     def __init__(self, uart):
+        """Create an instance.
+        uart -- the busio.UART instance to which to write messages
+        """
+
         self._uart = uart
 
     def format(self, level, msg):
