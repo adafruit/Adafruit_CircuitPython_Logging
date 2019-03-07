@@ -7,5 +7,5 @@
 .. automodule:: adafruit_logger.adafruit_logger
    :members:
 
- .. automodule:: adafruit_logger.uart_handler
+.. automodule:: adafruit_logger.uart_handler
    :members:
