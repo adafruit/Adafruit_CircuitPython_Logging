@@ -5,3 +5,4 @@
 .. use this format as the module name: "adafruit_foo.foo"
 
 .. automodule:: adafruit_logger
+   :members:
