@@ -31,15 +31,13 @@ Usage Example
 
 .. code-block:: python
 
-    import board
-    import busio
-    from adafruit_logger.uart_handler import UartHandler
-    from adafruit_logger import *
+    from adafruit_logger import Logger, ERROR, INFO
 
-    uart = busio.UART(board.TX, board.RX, baudrate=115200)
-    logger = Logger(UartHandler(uart))
-    logger.level = INFO
-    logger.info('testing')
+    logger = Logger()
+
+    logger.level = ERROR
+    logger.log(INFO, 'Info message')
+    logger.log(ERROR, 'Error message')
 
 
 Contributing
