@@ -31,13 +31,13 @@ Usage Example
 
 .. code-block:: python
 
-    from adafruit_logger import Logger, ERROR, INFO
+    import logging
 
-    logger = Logger()
+    logger = getLogger('test')
 
-    logger.level = ERROR
-    logger.log(INFO, 'Info message')
-    logger.log(ERROR, 'Error message')
+    logger.setLevel(logging.ERROR)
+    logger.info('Info message')
+    logger.error('Error message')
 
 
 Contributing

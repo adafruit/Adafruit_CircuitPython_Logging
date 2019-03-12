@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_logger`
+`logging`
 ================================================================================
 
 Logging module for CircuitPython
@@ -65,7 +65,9 @@ def level_for(value):
 
     """
     for i in range(len(LEVELS)):
-        if value < LEVELS[i][0]:
+        if value == LEVELS[i][0]:
+            return LEVELS[i][1]
+        elif value < LEVELS[i][0]:
             return LEVELS[i-1][1]
     return LEVELS[0][1]
 
@@ -108,6 +110,13 @@ class PrintHandler(LoggingHandler):
 # The level module-global variables get created when loaded
 #pylint:disable=undefined-variable
 
+logger_cache = dict()
+
+def getLogger(name):
+    if name not in logger_cache:
+        logger_cache[name] = Logger()
+    return logger_cache[name]
+
 class Logger(object):
     """Provide a logging api."""
 
@@ -123,13 +132,7 @@ class Logger(object):
         else:
             self._handler = handler
 
-    @property
-    def level(self):
-        """The level."""
-        return self._level
-
-    @level.setter
-    def level(self, value):
+    def setLevel(self, value):
         self._level = value
 
     def log(self, level, format_string, *args):
@@ -140,8 +143,8 @@ class Logger(object):
         :param args: arguments to ``format_string.format()``, can be empty
 
         """
-        if self._level != NOTSET and level >= self._level:
-            self._handler.emit(level, format_string.format(*args))
+        if level >= self._level:
+            self._handler.emit(level, format_string % args)
 
     def debug(self, format_string, *args):
         """Log a debug message.
