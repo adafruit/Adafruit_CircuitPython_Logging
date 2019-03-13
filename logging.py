@@ -113,6 +113,11 @@ class PrintHandler(LoggingHandler):
 logger_cache = dict()
 
 def getLogger(name):
+    """Create or retrieve a logger by name.
+
+    :param name: the name of the logger to create/retrieve
+
+    """
     if name not in logger_cache:
         logger_cache[name] = Logger()
     return logger_cache[name]
@@ -120,20 +125,32 @@ def getLogger(name):
 class Logger(object):
     """Provide a logging api."""
 
-    def __init__(self, handler=None):
+    def __init__(self):
         """Create an instance.
 
         :param handler: what to use to output messages. Defaults to a PrintHandler.
 
         """
         self._level = NOTSET
-        if handler is None:
-            self._handler = PrintHandler()
-        else:
-            self._handler = handler
+        self._handler = PrintHandler()
 
     def setLevel(self, value):
+        """Set the logging cuttoff level.
+
+        :param value: the lowest level to output
+
+        """
         self._level = value
+
+    def addHandler(self, hldr):
+        """Sets the handler of this logger to the specified handler.
+        *NOTE* this is slightly different from the CPython equivalent which adds
+        the handler rather than replaceing it.
+
+        :param hldr: the handler
+
+        """
+        self._handler = hldr
 
     def log(self, level, format_string, *args):
         """Log a message.
