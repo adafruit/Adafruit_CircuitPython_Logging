@@ -1,7 +1,7 @@
 #pylint:disable=undefined-variable,wildcard-import,no-name-in-module
 #pylint:disable=no-member
 
-import logging
+import adafruit_logging as logging
 
 logger = logging.getLogger('test')
 

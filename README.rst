@@ -31,9 +31,9 @@ Usage Example
 
 .. code-block:: python
 
-    import logging
+    import adafruit_logging as logging
 
-    logger = getLogger('test')
+    logger = logging.getLogger('test')
 
     logger.setLevel(logging.ERROR)
     logger.info('Info message')
