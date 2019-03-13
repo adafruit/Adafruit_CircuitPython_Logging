@@ -41,6 +41,7 @@ Implementation Notes
 
 """
 #pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
+#pylint:disable=invalid-name
 
 import time
 
