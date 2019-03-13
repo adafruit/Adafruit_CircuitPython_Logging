@@ -82,11 +82,7 @@ class LoggingHandler(object):
         :param msg: the message to log
 
         """
-        now = time.localtime()
-        time_vals = (now.tm_year, now.tm_mon, now.tm_mday,
-                     now.tm_hour, now.tm_min, now.tm_sec)
-        timestamp = '%4d/%02d/%02d %02d:%02d:%02d' % time_vals
-        return '{0}: {1} - {2}'.format(timestamp, level_for(level), msg)
+        return '{0}: {1} - {2}'.format(time.monotonic(), level_for(level), msg)
 
     def emit(self, level, msg):
         """Send a message where it should go.
