@@ -1,8 +1,10 @@
 #pylint:disable=undefined-variable,wildcard-import,no-name-in-module
-from adafruit_logger import Logger, ERROR, INFO
+#pylint:disable=no-member
 
-logger = Logger()
+import adafruit_logging as logging
 
-logger.level = ERROR
-logger.log(INFO, 'Info message')
-logger.log(ERROR, 'Error message')
+logger = logging.getLogger('test')
+
+logger.setLevel(logging.ERROR)
+logger.info('Info message')
+logger.error('Error message')

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_logger`
+`adafruit_logging`
 ================================================================================
 
 Logging module for CircuitPython
@@ -41,6 +41,7 @@ Implementation Notes
 
 """
 #pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
+#pylint:disable=invalid-name
 
 import time
 
@@ -65,7 +66,9 @@ def level_for(value):
 
     """
     for i in range(len(LEVELS)):
-        if value < LEVELS[i][0]:
+        if value == LEVELS[i][0]:
+            return LEVELS[i][1]
+        elif value < LEVELS[i][0]:
             return LEVELS[i-1][1]
     return LEVELS[0][1]
 
@@ -79,11 +82,7 @@ class LoggingHandler(object):
         :param msg: the message to log
 
         """
-        now = time.localtime()
-        time_vals = (now.tm_year, now.tm_mon, now.tm_mday,
-                     now.tm_hour, now.tm_min, now.tm_sec)
-        timestamp = '%4d/%02d/%02d %02d:%02d:%02d' % time_vals
-        return '{0}: {1} - {2}'.format(timestamp, level_for(level), msg)
+        return '{0}: {1} - {2}'.format(time.monotonic(), level_for(level), msg)
 
     def emit(self, level, msg):
         """Send a message where it should go.
@@ -108,29 +107,47 @@ class PrintHandler(LoggingHandler):
 # The level module-global variables get created when loaded
 #pylint:disable=undefined-variable
 
+logger_cache = dict()
+
+def getLogger(name):
+    """Create or retrieve a logger by name.
+
+    :param name: the name of the logger to create/retrieve
+
+    """
+    if name not in logger_cache:
+        logger_cache[name] = Logger()
+    return logger_cache[name]
+
 class Logger(object):
     """Provide a logging api."""
 
-    def __init__(self, handler=None):
+    def __init__(self):
         """Create an instance.
 
         :param handler: what to use to output messages. Defaults to a PrintHandler.
 
         """
         self._level = NOTSET
-        if handler is None:
-            self._handler = PrintHandler()
-        else:
-            self._handler = handler
+        self._handler = PrintHandler()
 
-    @property
-    def level(self):
-        """The level."""
-        return self._level
+    def setLevel(self, value):
+        """Set the logging cuttoff level.
 
-    @level.setter
-    def level(self, value):
+        :param value: the lowest level to output
+
+        """
         self._level = value
+
+    def addHandler(self, hldr):
+        """Sets the handler of this logger to the specified handler.
+        *NOTE* this is slightly different from the CPython equivalent which adds
+        the handler rather than replaceing it.
+
+        :param hldr: the handler
+
+        """
+        self._handler = hldr
 
     def log(self, level, format_string, *args):
         """Log a message.
@@ -140,8 +157,8 @@ class Logger(object):
         :param args: arguments to ``format_string.format()``, can be empty
 
         """
-        if self._level != NOTSET and level >= self._level:
-            self._handler.emit(level, format_string.format(*args))
+        if level >= self._level:
+            self._handler.emit(level, format_string % args)
 
     def debug(self, format_string, *args):
         """Log a debug message.
