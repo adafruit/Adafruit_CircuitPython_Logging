@@ -3,6 +3,6 @@ Simple test
 
 Ensure your device works with this simple test.
 
-.. literalinclude:: ../examples/logger_simpletest.py
-    :caption: examples/logger_simpletest.py
+.. literalinclude:: ../examples/logging_simpletest.py
+    :caption: examples/logging_simpletest.py
     :linenos:
