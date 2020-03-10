@@ -40,8 +40,8 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 
 """
-#pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
-#pylint:disable=invalid-name
+# pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
+# pylint:disable=invalid-name
 
 import time
 
@@ -49,15 +49,18 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
 
 
-LEVELS = [(00, 'NOTSET'),
-          (10, 'DEBUG'),
-          (20, 'INFO'),
-          (30, 'WARNING'),
-          (40, 'ERROR'),
-          (50, 'CRITICAL')]
+LEVELS = [
+    (00, "NOTSET"),
+    (10, "DEBUG"),
+    (20, "INFO"),
+    (30, "WARNING"),
+    (40, "ERROR"),
+    (50, "CRITICAL"),
+]
 
 for value, name in LEVELS:
     globals()[name] = value
+
 
 def level_for(value):
     """Convert a numberic level to the most appropriate name.
@@ -68,11 +71,12 @@ def level_for(value):
     for i in range(len(LEVELS)):
         if value == LEVELS[i][0]:
             return LEVELS[i][1]
-        elif value < LEVELS[i][0]:
-            return LEVELS[i-1][1]
+        if value < LEVELS[i][0]:
+            return LEVELS[i - 1][1]
     return LEVELS[0][1]
 
-class LoggingHandler(object):
+
+class LoggingHandler():
     """Abstract logging message handler."""
 
     def format(self, level, msg):
@@ -82,7 +86,7 @@ class LoggingHandler(object):
         :param msg: the message to log
 
         """
-        return '{0}: {1} - {2}'.format(time.monotonic(), level_for(level), msg)
+        return "{0}: {1} - {2}".format(time.monotonic(), level_for(level), msg)
 
     def emit(self, level, msg):
         """Send a message where it should go.
@@ -105,9 +109,10 @@ class PrintHandler(LoggingHandler):
 
 
 # The level module-global variables get created when loaded
-#pylint:disable=undefined-variable
+# pylint:disable=undefined-variable
 
 logger_cache = dict()
+
 
 def getLogger(name):
     """Create or retrieve a logger by name.
@@ -119,7 +124,8 @@ def getLogger(name):
         logger_cache[name] = Logger()
     return logger_cache[name]
 
-class Logger(object):
+
+class Logger():
     """Provide a logging api."""
 
     def __init__(self):
