@@ -1,8 +1,8 @@
 Introduction
 ============
 
-.. image:: https://readthedocs.org/projects/adafruit-circuitpython-logger/badge/?version=latest
-    :target: https://circuitpython.readthedocs.io/projects/logger/en/latest/
+.. image:: https://readthedocs.org/projects/adafruit-circuitpython-logging/badge/?version=latest
+    :target: https://circuitpython.readthedocs.io/projects/logging/en/latest/
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/discord/327254708534116352.svg
