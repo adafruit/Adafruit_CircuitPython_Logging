@@ -76,7 +76,7 @@ def level_for(value):
     return LEVELS[0][1]
 
 
-class LoggingHandler():
+class LoggingHandler:
     """Abstract logging message handler."""
 
     def format(self, level, msg):
@@ -125,7 +125,7 @@ def getLogger(name):
     return logger_cache[name]
 
 
-class Logger():
+class Logger:
     """Provide a logging api."""
 
     def __init__(self):
