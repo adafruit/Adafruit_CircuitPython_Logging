@@ -145,8 +145,8 @@ class Logger:
         """
         self._level = value
 
-    def getLevel(self):
-        """Get the logging cuttoff level.
+    def getEffectiveLevel(self):
+        """Get the effective level for this logger.
 
         :return: the lowest level to output
 
