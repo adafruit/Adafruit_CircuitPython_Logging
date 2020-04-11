@@ -145,6 +145,14 @@ class Logger:
         """
         self._level = value
 
+    def getLevel(self):
+        """Get the logging cuttoff level.
+
+        :return: the lowest level to output
+
+        """
+        return self._level
+
     def addHandler(self, hldr):
         """Sets the handler of this logger to the specified handler.
         *NOTE* this is slightly different from the CPython equivalent which adds
