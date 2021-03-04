@@ -97,15 +97,15 @@ class PrintHandler(LoggingHandler):
 logger_cache = dict()
 null_logger = None
 
-
+# pylint:disable=global-statement
 def getLogger(name):
-    global null_logger
     """Create or retrieve a logger by name.
 
     :param name: the name of the logger to create/retrieve None will cause the
                  NullLogger instance to be returned.
 
     """
+    global null_logger
     if not name or name == "":
         if not null_logger:
             null_logger = NullLogger()
@@ -114,6 +114,9 @@ def getLogger(name):
     if name not in logger_cache:
         logger_cache[name] = Logger()
     return logger_cache[name]
+
+
+# pylint:enable=global-statement
 
 
 class Logger:
