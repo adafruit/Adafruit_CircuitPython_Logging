@@ -95,14 +95,22 @@ class PrintHandler(LoggingHandler):
 # pylint:disable=undefined-variable
 
 logger_cache = dict()
+null_logger = None
 
 
 def getLogger(name):
+    global null_logger
     """Create or retrieve a logger by name.
 
-    :param name: the name of the logger to create/retrieve
+    :param name: the name of the logger to create/retrieve None will cause the
+                 NullLogger instance to be returned.
 
     """
+    if not name or name == "":
+        if not null_logger:
+            null_logger = NullLogger()
+        return null_logger
+
     if name not in logger_cache:
         logger_cache[name] = Logger()
     return logger_cache[name]
@@ -112,11 +120,7 @@ class Logger:
     """Provide a logging api."""
 
     def __init__(self):
-        """Create an instance.
-
-        :param handler: what to use to output messages. Defaults to a PrintHandler.
-
-        """
+        """Create an instance."""
         self._level = NOTSET
         self._handler = PrintHandler()
 
@@ -201,3 +205,39 @@ class Logger:
 
         """
         self.log(CRITICAL, format_string, *args)
+
+
+class NullLogger:
+    """Provide an empty logger.
+    This can be used in place of a real logger to more efficiently disable logging."""
+
+    def __init__(self):
+        """Dummy implementation."""
+
+    def setLevel(self, value):
+        """Dummy implementation."""
+
+    def getEffectiveLevel(self):
+        """Dummy implementation."""
+        return NOTSET
+
+    def addHandler(self, hldr):
+        """Dummy implementation."""
+
+    def log(self, level, format_string, *args):
+        """Dummy implementation."""
+
+    def debug(self, format_string, *args):
+        """Dummy implementation."""
+
+    def info(self, format_string, *args):
+        """Dummy implementation."""
+
+    def warning(self, format_string, *args):
+        """Dummy implementation."""
+
+    def error(self, format_string, *args):
+        """Dummy implementation."""
+
+    def critical(self, format_string, *args):
+        """Dummy implementation."""
