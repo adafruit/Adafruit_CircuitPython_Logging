@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-# noinspection PyUnresolvedReferences
 """
 `adafruit_logging`
 ================================================================================
@@ -55,7 +54,6 @@ import time
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
-# noinspection PyUnresolvedReferences
 # pylint:disable=undefined-all-variable
 __all__ = ['LEVELS', 'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL',
            'level_for', 'LoggingHandler', 'PrintHandler', 'logger_cache',
@@ -75,16 +73,16 @@ for __value, __name in LEVELS:
     globals()[__name] = __value
 
 
-def level_for(level_value):
+def level_for(value):
     """Convert a numeric level to the most appropriate name.
 
-    :param int level_value: a numeric level
+    :param int value: a numeric level
 
     """
     for i in range(len(LEVELS)):
-        if level_value == LEVELS[i][0]:
+        if value == LEVELS[i][0]:
             return LEVELS[i][1]
-        if level_value < LEVELS[i][0]:
+        if value < LEVELS[i][0]:
             return LEVELS[i - 1][1]
     return LEVELS[0][1]
 
@@ -157,7 +155,6 @@ class Logger:
 
     def __init__(self):
         """Create an instance."""
-        # noinspection PyUnresolvedReferences
         self._level = NOTSET
         self._handler = PrintHandler()
 
@@ -182,7 +179,7 @@ class Logger:
         *NOTE* this is slightly different from the CPython equivalent which adds
         the handler rather than replacing it.
 
-        :param handler: the handler
+        :param LoggingHandler handler: the handler
 
         """
         self._handler = handler
@@ -207,7 +204,6 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        # noinspection PyUnresolvedReferences
         self.log(DEBUG, format_string, *args)
 
     def info(self, format_string, *args):
@@ -218,7 +214,6 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        # noinspection PyUnresolvedReferences
         self.log(INFO, format_string, *args)
 
     def warning(self, format_string, *args):
@@ -229,7 +224,6 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        # noinspection PyUnresolvedReferences
         self.log(WARNING, format_string, *args)
 
     def error(self, format_string, *args):
@@ -240,7 +234,6 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        # noinspection PyUnresolvedReferences
         self.log(ERROR, format_string, *args)
 
     def critical(self, format_string, *args):
@@ -251,7 +244,6 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        # noinspection PyUnresolvedReferences
         self.log(CRITICAL, format_string, *args)
 
 
@@ -268,7 +260,6 @@ class NullLogger:
 
     def getEffectiveLevel(self):
         """Dummy implementation."""
-        # noinspection PyUnresolvedReferences
         return NOTSET
 
     def addHandler(self, handler):
