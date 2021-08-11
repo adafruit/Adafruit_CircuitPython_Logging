@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+# noinspection PyUnresolvedReferences
 """
 `adafruit_logging`
 ================================================================================
@@ -22,6 +23,30 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
 
+Attributes
+----------
+    LEVELS : list
+        A list of tuples representing the valid logging levels used by
+        this module. Each tuple contains exactly two elements: one int and one
+        str. The int in each tuple represents the relative severity of that
+        level (00 to 50). The str in each tuple is the string representation of
+        that logging level ("NOTSET" to "CRITICAL"; see below).
+    NOTSET : int
+        The NOTSET logging level, which is a dummy logging level that can be
+        used to indicate that a `Logger` should not print any logging messages,
+        regardless of how severe those messages might be (including CRITICAL).
+    DEBUG : int
+        The DEBUG logging level, which is the lowest (least severe) real level.
+    INFO : int
+        The INFO logging level for informative/informational messages.
+    WARNING : int
+       The WARNING logging level for warnings that should be addressed/fixed.
+    ERROR : int
+        The ERROR logging level for Python exceptions that occur during runtime.
+    CRITICAL : int
+        The CRITICAL logging level, which is the highest (most severe) level for
+        unrecoverable errors that have caused the code to halt and exit.
+
 """
 # pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
 # pylint:disable=invalid-name
@@ -30,6 +55,11 @@ import time
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
+# noinspection PyUnresolvedReferences
+# pylint:disable=undefined-all-variable
+__all__ = ['LEVELS', 'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL',
+           'level_for', 'LoggingHandler', 'PrintHandler', 'logger_cache',
+           'null_logger', 'getLogger', 'Logger', 'NullLogger']
 
 
 LEVELS = [
@@ -41,20 +71,20 @@ LEVELS = [
     (50, "CRITICAL"),
 ]
 
-for value, name in LEVELS:
-    globals()[name] = value
+for __value, __name in LEVELS:
+    globals()[__name] = __value
 
 
-def level_for(value):
-    """Convert a numberic level to the most appropriate name.
+def level_for(level_value):
+    """Convert a numeric level to the most appropriate name.
 
-    :param value: a numeric level
+    :param int level_value: a numeric level
 
     """
     for i in range(len(LEVELS)):
-        if value == LEVELS[i][0]:
+        if level_value == LEVELS[i][0]:
             return LEVELS[i][1]
-        if value < LEVELS[i][0]:
+        if level_value < LEVELS[i][0]:
             return LEVELS[i - 1][1]
     return LEVELS[0][1]
 
@@ -62,18 +92,20 @@ def level_for(value):
 class LoggingHandler:
     """Abstract logging message handler."""
 
-    def format(self, level, msg):
+    def format(self, log_level, message):
         """Generate a timestamped message.
 
-        :param level: the logging level
-        :param msg: the message to log
+        :param int log_level: the logging level
+        :param str message: the message to log
 
         """
-        return "{0}: {1} - {2}".format(time.monotonic(), level_for(level), msg)
+        return "{0}: {1} - {2}".format(time.monotonic(),
+                                       level_for(log_level),
+                                       message)
 
-    def emit(self, level, msg):
+    def emit(self, log_level, message):
         """Send a message where it should go.
-        Place holder for subclass implementations.
+        Placeholder for subclass implementations.
         """
         raise NotImplementedError()
 
@@ -81,14 +113,14 @@ class LoggingHandler:
 class PrintHandler(LoggingHandler):
     """Send logging messages to the console by using print."""
 
-    def emit(self, level, msg):
+    def emit(self, log_level, message):
         """Send a message to teh console.
 
-        :param level: the logging level
-        :param msg: the message to log
+        :param int log_level: the logging level
+        :param str message: the message to log
 
         """
-        print(self.format(level, msg))
+        print(self.format(log_level, message))
 
 
 # The level module-global variables get created when loaded
@@ -97,23 +129,24 @@ class PrintHandler(LoggingHandler):
 logger_cache = dict()
 null_logger = None
 
+
 # pylint:disable=global-statement
-def getLogger(name):
+def getLogger(logger_name):
     """Create or retrieve a logger by name.
 
-    :param name: the name of the logger to create/retrieve None will cause the
-                 NullLogger instance to be returned.
+    :param str logger_name: The name of the `Logger` to create/retrieve. `None`
+                            will cause the `NullLogger` instance to be returned.
 
     """
     global null_logger
-    if not name or name == "":
+    if not logger_name or logger_name == "":
         if not null_logger:
             null_logger = NullLogger()
         return null_logger
 
-    if name not in logger_cache:
-        logger_cache[name] = Logger()
-    return logger_cache[name]
+    if logger_name not in logger_cache:
+        logger_cache[logger_name] = Logger()
+    return logger_cache[logger_name]
 
 
 # pylint:enable=global-statement
@@ -124,16 +157,17 @@ class Logger:
 
     def __init__(self):
         """Create an instance."""
+        # noinspection PyUnresolvedReferences
         self._level = NOTSET
         self._handler = PrintHandler()
 
-    def setLevel(self, value):
-        """Set the logging cuttoff level.
+    def setLevel(self, log_level):
+        """Set the logging cutoff level.
 
-        :param value: the lowest level to output
+        :param int log_level: the lowest level to output
 
         """
-        self._level = value
+        self._level = log_level
 
     def getEffectiveLevel(self):
         """Get the effective level for this logger.
@@ -143,91 +177,104 @@ class Logger:
         """
         return self._level
 
-    def addHandler(self, hldr):
+    def addHandler(self, handler):
         """Sets the handler of this logger to the specified handler.
         *NOTE* this is slightly different from the CPython equivalent which adds
-        the handler rather than replaceing it.
+        the handler rather than replacing it.
 
-        :param hldr: the handler
+        :param handler: the handler
 
         """
-        self._handler = hldr
+        self._handler = handler
 
-    def log(self, level, format_string, *args):
+    def log(self, log_level, format_string, *args):
         """Log a message.
 
-        :param level: the priority level at which to log
-        :param format_string: the core message string with embedded formatting directives
-        :param args: arguments to ``format_string.format()``, can be empty
+        :param int log_level: the priority level at which to log
+        :param str format_string: the core message string with embedded
+                                  formatting directives
+        :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        if level >= self._level:
-            self._handler.emit(level, format_string % args)
+        if log_level >= self._level:
+            self._handler.emit(log_level, format_string % args)
 
     def debug(self, format_string, *args):
         """Log a debug message.
 
-        :param format_string: the core message string with embedded formatting directives
-        :param args: arguments to ``format_string.format()``, can be empty
+        :param str format_string: the core message string with embedded
+                                  formatting directives
+        :param args: arguments to ``format_string.format()``; can be empty
 
         """
+        # noinspection PyUnresolvedReferences
         self.log(DEBUG, format_string, *args)
 
     def info(self, format_string, *args):
         """Log a info message.
 
-        :param format_string: the core message string with embedded formatting directives
-        :param args: arguments to ``format_string.format()``, can be empty
+        :param str format_string: the core message string with embedded
+                                  formatting directives
+        :param args: arguments to ``format_string.format()``; can be empty
 
         """
+        # noinspection PyUnresolvedReferences
         self.log(INFO, format_string, *args)
 
     def warning(self, format_string, *args):
         """Log a warning message.
 
-        :param format_string: the core message string with embedded formatting directives
-        :param args: arguments to ``format_string.format()``, can be empty
+        :param str format_string: the core message string with embedded
+                                  formatting directives
+        :param args: arguments to ``format_string.format()``; can be empty
 
         """
+        # noinspection PyUnresolvedReferences
         self.log(WARNING, format_string, *args)
 
     def error(self, format_string, *args):
         """Log a error message.
 
-        :param format_string: the core message string with embedded formatting directives
-        :param args: arguments to ``format_string.format()``, can be empty
+        :param str format_string: the core message string with embedded
+                                  formatting directives
+        :param args: arguments to ``format_string.format()``; can be empty
 
         """
+        # noinspection PyUnresolvedReferences
         self.log(ERROR, format_string, *args)
 
     def critical(self, format_string, *args):
         """Log a critical message.
 
-        :param format_string: the core message string with embedded formatting directives
-        :param args: arguments to ``format_string.format()``, can be empty
+        :param str format_string: the core message string with embedded
+                                  formatting directives
+        :param args: arguments to ``format_string.format()``; can be empty
 
         """
+        # noinspection PyUnresolvedReferences
         self.log(CRITICAL, format_string, *args)
 
 
 class NullLogger:
     """Provide an empty logger.
-    This can be used in place of a real logger to more efficiently disable logging."""
+    This can be used in place of a real logger to more efficiently disable
+    logging."""
 
     def __init__(self):
         """Dummy implementation."""
 
-    def setLevel(self, value):
+    def setLevel(self, log_level):
         """Dummy implementation."""
 
     def getEffectiveLevel(self):
         """Dummy implementation."""
+        # noinspection PyUnresolvedReferences
         return NOTSET
 
-    def addHandler(self, hldr):
+    def addHandler(self, handler):
         """Dummy implementation."""
 
-    def log(self, level, format_string, *args):
+    def log(self, log_level, format_string, *args):
         """Dummy implementation."""
 
     def debug(self, format_string, *args):
