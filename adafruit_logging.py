@@ -55,9 +55,23 @@ import time
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
 # pylint:disable=undefined-all-variable
-__all__ = ['LEVELS', 'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL',
-           'level_for', 'LoggingHandler', 'PrintHandler', 'logger_cache',
-           'null_logger', 'getLogger', 'Logger', 'NullLogger']
+__all__ = [
+    "LEVELS",
+    "NOTSET",
+    "DEBUG",
+    "INFO",
+    "WARNING",
+    "ERROR",
+    "CRITICAL",
+    "level_for",
+    "LoggingHandler",
+    "PrintHandler",
+    "logger_cache",
+    "null_logger",
+    "getLogger",
+    "Logger",
+    "NullLogger",
+]
 
 
 LEVELS = [
@@ -97,9 +111,7 @@ class LoggingHandler:
         :param str message: the message to log
 
         """
-        return "{0}: {1} - {2}".format(time.monotonic(),
-                                       level_for(log_level),
-                                       message)
+        return "{0}: {1} - {2}".format(time.monotonic(), level_for(log_level), message)
 
     def emit(self, log_level, message):
         """Send a message where it should go.
