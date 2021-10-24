@@ -82,7 +82,7 @@ class PrintHandler(LoggingHandler):
     """Send logging messages to the console by using print."""
 
     def emit(self, level, msg):
-        """Send a message to teh console.
+        """Send a message to the console.
 
         :param level: the logging level
         :param msg: the message to log
