@@ -103,7 +103,7 @@ class FileHandler(LoggingHandler):
     def __init__(self, filepath: str, overwrite: bool = False):
         self._filepath = filepath
         if overwrite:
-            log_file = open(self._filepath, "w")
+            log_file = open(self._filepath, "w", encoding="utf-8")
             log_file.close()
 
     def emit(self, level: int, msg: str):
@@ -113,7 +113,7 @@ class FileHandler(LoggingHandler):
         :param msg: The message to log
         """
 
-        with open(self._filepath, "a") as log_file:
+        with open(self._filepath, "a", encoding="utf-8") as log_file:
             log_file.write(self.format(level, msg) + "\n")
 
 
