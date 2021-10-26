@@ -96,8 +96,7 @@ class FileHandler(LoggingHandler):
     an SD card)
 
     :param filepath: The filepath to the log file
-    :param overwrite: Whether the log should be overwritten (True) \
-    or appended (False); default is to append
+    :param mode: Whether to write ('w') or append ('a'); default is to append
     """
 
     def __init__(self, filepath: str, mode: str = "a"):
