@@ -92,28 +92,28 @@ class PrintHandler(LoggingHandler):
 
 
 class FileHandler(LoggingHandler):
-    '''File handler for working with log files off of the microcontroller (like 
+    """File handler for working with log files off of the microcontroller (like
     an SD card)
-    
+
     :param filepath: The filepath to the log file
     :param overwrite: Whether the log should be overwritten (True) \
     or appended (False); default is to append
-    '''
+    """
 
     def __init__(self, filepath: str, overwrite: bool = False):
         self._filepath = filepath
         if overwrite:
-            log_file = open(self._filepath, 'w')
+            log_file = open(self._filepath, "w")
             log_file.close()
 
     def emit(self, level: int, msg: str):
-        '''Append a formatted message to the log
-        
+        """Append a formatted message to the log
+
         :param level: The level of the message
         :param msg: The message to log
-        '''
+        """
 
-        with open(self._filepath, 'a') as log_file:
+        with open(self._filepath, "a") as log_file:
             log_file.write(self.format(level, msg) + "\n")
 
 
