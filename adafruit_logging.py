@@ -100,11 +100,12 @@ class FileHandler(LoggingHandler):
     or appended (False); default is to append
     """
 
-    def __init__(self, filepath: str, overwrite: bool = False):
-        self._filepath = filepath
-        if overwrite:
-            log_file = open(self._filepath, "w", encoding="utf-8")
-            log_file.close()
+    def __init__(self, filepath: str, mode: str = 'a'):
+        self.logfile = open(filepath, mode, encoding="utf-8")
+
+    def close(self):
+        """Closes the file"""
+        self.logfile.close()
 
     def emit(self, level: int, msg: str):
         """Append a formatted message to the log
@@ -113,8 +114,7 @@ class FileHandler(LoggingHandler):
         :param msg: The message to log
         """
 
-        with open(self._filepath, "a", encoding="utf-8") as log_file:
-            log_file.write(self.format(level, msg) + "\n")
+        self.logfile.write(self.format(level, msg) + "\n")
 
 
 # The level module-global variables get created when loaded
