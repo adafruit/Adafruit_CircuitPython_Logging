@@ -98,7 +98,7 @@ logger_cache = dict()
 null_logger = None
 
 # pylint:disable=global-statement
-def getLogger(name: str) -> 'Logger':
+def getLogger(name: str) -> "Logger":
     """Create or retrieve a logger by name.
 
     :param name: the name of the logger to create/retrieve None will cause the
