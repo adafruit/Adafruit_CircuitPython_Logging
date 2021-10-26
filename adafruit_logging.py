@@ -100,7 +100,7 @@ class FileHandler(LoggingHandler):
     or appended (False); default is to append
     """
 
-    def __init__(self, filepath: str, mode: str = 'a'):
+    def __init__(self, filepath: str, mode: str = "a"):
         self.logfile = open(filepath, mode, encoding="utf-8")
 
     def close(self):
