@@ -62,7 +62,7 @@ def level_for(value: int) -> str:
 class LoggingHandler:
     """Abstract logging message handler."""
 
-    def format(self, leve: int, msg: str) -> str:
+    def format(self, level: int, msg: str) -> str:
         """Generate a timestamped message.
 
         :param level: the logging level
