@@ -99,8 +99,8 @@ class FileHandler(LoggingHandler):
     :param mode: Whether to write ('w') or append ('a'); default is to append
     """
 
-    def __init__(self, filepath: str, mode: str = "a"):
-        self.logfile = open(filepath, mode, encoding="utf-8")
+    def __init__(self, filepath: str, mode: str = 'a'):
+        self.logfile = open(filepath, mode, encoding='utf-8')
 
     def close(self):
         """Closes the file"""
