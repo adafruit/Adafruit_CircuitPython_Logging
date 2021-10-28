@@ -1,5 +1,6 @@
 from . import LoggingHandler
 
+
 class FileHandler(LoggingHandler):
     """File handler for working with log files off of the microcontroller (like
     an SD card)
