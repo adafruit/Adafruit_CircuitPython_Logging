@@ -1,3 +1,16 @@
+# SPDX-FileCopyrightText: 2021 Alec Delaney for Adafruit Industries
+#
+# SPDX-License-Identifier: MIT
+
+"""
+`extensions`
+====================================================
+
+CircuitPython logging extension for logging to files
+
+* Author(s): Alec Delaney
+"""
+
 from . import LoggingHandler
 
 
