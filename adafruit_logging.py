@@ -106,14 +106,21 @@ class FileHandler(LoggingHandler):
         """Closes the file"""
         self.logfile.close()
 
-    def emit(self, level: int, msg: str):
-        """Append a formatted message to the log
+    def format(self, level: int, msg: str):
+        """Generate a string to log
+        
+        :param level: The level of the message
+        :param msg: The message to format
+        """
+        return super(FileHandler, self).format(level, msg) + '\r\n'
 
+    def emit(self, level: int, msg: str):
+        """Generate the message and write it to the UART.
+        
         :param level: The level of the message
         :param msg: The message to log
         """
-
-        self.logfile.write(self.format(level, msg) + "\n")
+        self.logfile.write(self.format(level, msg))
 
 
 # The level module-global variables get created when loaded
