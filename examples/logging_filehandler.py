@@ -6,13 +6,7 @@ import sdcardio
 import storage
 import adafruit_logging as logging
 
-# Initialize SD card
-spi = board.SPI()
-sdcard = sdcardio.SDCard(spi, board.D10)
-vfs = storage.VfsFat(sdcard)
-storage.mount(vfs, '/sd')
-
-# Initialize log functionality
+# Initialize log functionality on a writable medium, like an SD card
 log_filepath = "/sd/testlog.log"
 logger = logging.getLogger("testlog")
 file_handler = logging.FileHandler(log_filepath)
