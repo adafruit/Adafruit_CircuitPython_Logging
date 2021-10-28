@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2021 Alec Delaney
 # SPDX-License-Identifier: MIT
 
-import board
 import adafruit_logging as logging
 
 # Initialize log functionality on a writable medium, like an SD card
