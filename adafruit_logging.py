@@ -99,8 +99,8 @@ class FileHandler(LoggingHandler):
     :param mode: Whether to write ('w') or append ('a'); default is to append
     """
 
-    def __init__(self, filepath: str, mode: str = 'a'):
-        self.logfile = open(filepath, mode, encoding='utf-8')
+    def __init__(self, filepath: str, mode: str = "a"):
+        self.logfile = open(filepath, mode, encoding="utf-8")
 
     def close(self):
         """Closes the file"""
@@ -108,15 +108,15 @@ class FileHandler(LoggingHandler):
 
     def format(self, level: int, msg: str):
         """Generate a string to log
-        
+
         :param level: The level of the message
         :param msg: The message to format
         """
-        return super(FileHandler, self).format(level, msg) + '\r\n'
+        return super().format(level, msg) + "\r\n"
 
     def emit(self, level: int, msg: str):
         """Generate the message and write it to the UART.
-        
+
         :param level: The level of the message
         :param msg: The message to log
         """
