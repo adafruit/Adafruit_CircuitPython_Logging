@@ -7,6 +7,7 @@ from digitalio import DigitalInOut
 import storage
 import adafruit_sdcard
 import adafruit_logging as logging
+from adafruit_logging.extensions import FileHandler
 
 # Get chip select pin depending on the board, this one is for the Feather M4 Express
 sd_cs = board.D10
@@ -21,7 +22,7 @@ storage.mount(vfs, "/sd")
 # Initialize log functionality
 log_filepath = "/sd/testlog.log"
 logger = logging.getLogger("testlog")
-file_handler = logging.FileHandler(log_filepath)
+file_handler = FileHandler(log_filepath)
 logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
