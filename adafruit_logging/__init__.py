@@ -45,7 +45,7 @@ for value, name in LEVELS:
     globals()[name] = value
 
 
-def level_for(value):
+def level_for(value: int) -> str:
     """Convert a numberic level to the most appropriate name.
 
     :param value: a numeric level
@@ -62,7 +62,7 @@ def level_for(value):
 class LoggingHandler:
     """Abstract logging message handler."""
 
-    def format(self, level, msg):
+    def format(self, level: int, msg: str) -> str:
         """Generate a timestamped message.
 
         :param level: the logging level
@@ -71,7 +71,7 @@ class LoggingHandler:
         """
         return "{0}: {1} - {2}".format(time.monotonic(), level_for(level), msg)
 
-    def emit(self, level, msg):
+    def emit(self, level: int, msg: str):
         """Send a message where it should go.
         Place holder for subclass implementations.
         """
@@ -81,8 +81,8 @@ class LoggingHandler:
 class PrintHandler(LoggingHandler):
     """Send logging messages to the console by using print."""
 
-    def emit(self, level, msg):
-        """Send a message to teh console.
+    def emit(self, level: int, msg: str):
+        """Send a message to the console.
 
         :param level: the logging level
         :param msg: the message to log
@@ -98,7 +98,7 @@ logger_cache = dict()
 null_logger = None
 
 # pylint:disable=global-statement
-def getLogger(name):
+def getLogger(name: str) -> "Logger":
     """Create or retrieve a logger by name.
 
     :param name: the name of the logger to create/retrieve None will cause the
@@ -127,7 +127,7 @@ class Logger:
         self._level = NOTSET
         self._handler = PrintHandler()
 
-    def setLevel(self, value):
+    def setLevel(self, value: int):
         """Set the logging cuttoff level.
 
         :param value: the lowest level to output
@@ -135,7 +135,7 @@ class Logger:
         """
         self._level = value
 
-    def getEffectiveLevel(self):
+    def getEffectiveLevel(self) -> int:
         """Get the effective level for this logger.
 
         :return: the lowest level to output
@@ -143,7 +143,7 @@ class Logger:
         """
         return self._level
 
-    def addHandler(self, hldr):
+    def addHandler(self, hldr: LoggingHandler):
         """Sets the handler of this logger to the specified handler.
         *NOTE* this is slightly different from the CPython equivalent which adds
         the handler rather than replaceing it.
@@ -153,7 +153,7 @@ class Logger:
         """
         self._handler = hldr
 
-    def log(self, level, format_string, *args):
+    def log(self, level: int, format_string: str, *args):
         """Log a message.
 
         :param level: the priority level at which to log
@@ -164,7 +164,7 @@ class Logger:
         if level >= self._level:
             self._handler.emit(level, format_string % args)
 
-    def debug(self, format_string, *args):
+    def debug(self, format_string: str, *args):
         """Log a debug message.
 
         :param format_string: the core message string with embedded formatting directives
@@ -173,7 +173,7 @@ class Logger:
         """
         self.log(DEBUG, format_string, *args)
 
-    def info(self, format_string, *args):
+    def info(self, format_string: str, *args):
         """Log a info message.
 
         :param format_string: the core message string with embedded formatting directives
@@ -182,7 +182,7 @@ class Logger:
         """
         self.log(INFO, format_string, *args)
 
-    def warning(self, format_string, *args):
+    def warning(self, format_string: str, *args):
         """Log a warning message.
 
         :param format_string: the core message string with embedded formatting directives
@@ -191,7 +191,7 @@ class Logger:
         """
         self.log(WARNING, format_string, *args)
 
-    def error(self, format_string, *args):
+    def error(self, format_string: str, *args):
         """Log a error message.
 
         :param format_string: the core message string with embedded formatting directives
@@ -200,7 +200,7 @@ class Logger:
         """
         self.log(ERROR, format_string, *args)
 
-    def critical(self, format_string, *args):
+    def critical(self, format_string: str, *args):
         """Log a critical message.
 
         :param format_string: the core message string with embedded formatting directives
@@ -217,30 +217,30 @@ class NullLogger:
     def __init__(self):
         """Dummy implementation."""
 
-    def setLevel(self, value):
+    def setLevel(self, value: int):
         """Dummy implementation."""
 
-    def getEffectiveLevel(self):
+    def getEffectiveLevel(self) -> int:
         """Dummy implementation."""
         return NOTSET
 
-    def addHandler(self, hldr):
+    def addHandler(self, hldr: LoggingHandler):
         """Dummy implementation."""
 
-    def log(self, level, format_string, *args):
+    def log(self, level: int, format_string: str, *args):
         """Dummy implementation."""
 
-    def debug(self, format_string, *args):
+    def debug(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def info(self, format_string, *args):
+    def info(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def warning(self, format_string, *args):
+    def warning(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def error(self, format_string, *args):
+    def error(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def critical(self, format_string, *args):
+    def critical(self, format_string: str, *args):
         """Dummy implementation."""
