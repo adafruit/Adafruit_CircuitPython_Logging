@@ -94,7 +94,7 @@ class PrintHandler(LoggingHandler):
 # The level module-global variables get created when loaded
 # pylint:disable=undefined-variable
 
-logger_cache = dict()
+logger_cache = {}
 null_logger = None
 
 # pylint:disable=global-statement

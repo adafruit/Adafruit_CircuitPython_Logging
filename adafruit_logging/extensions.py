@@ -23,7 +23,9 @@ class FileHandler(LoggingHandler):
     """
 
     def __init__(self, filepath: str, mode: str = "a"):
-        self.logfile = open(filepath, mode, encoding="utf-8")
+        self.logfile = open(  # pylint: disable=consider-using-with
+            filepath, mode, encoding="utf-8"
+        )
 
     def close(self):
         """Closes the file"""
