@@ -87,7 +87,7 @@ for __value, __name in LEVELS:
     globals()[__name] = __value
 
 
-def level_for(value):
+def level_for(value: int) -> str:
     """Convert a numeric level to the most appropriate name.
 
     :param int value: a numeric level
@@ -104,7 +104,7 @@ def level_for(value):
 class LoggingHandler:
     """Abstract logging message handler."""
 
-    def format(self, log_level, message):
+    def format(self, log_level: int, message: str) -> str:
         """Generate a timestamped message.
 
         :param int log_level: the logging level
@@ -113,7 +113,7 @@ class LoggingHandler:
         """
         return "{0}: {1} - {2}".format(time.monotonic(), level_for(log_level), message)
 
-    def emit(self, log_level, message):
+    def emit(self, log_level: int, message: str):
         """Send a message where it should go.
         Placeholder for subclass implementations.
         """
@@ -123,8 +123,8 @@ class LoggingHandler:
 class PrintHandler(LoggingHandler):
     """Send logging messages to the console by using print."""
 
-    def emit(self, log_level, message):
-        """Send a message to teh console.
+    def emit(self, log_level: int, message: str):
+        """Send a message to the console.
 
         :param int log_level: the logging level
         :param str message: the message to log
@@ -136,12 +136,11 @@ class PrintHandler(LoggingHandler):
 # The level module-global variables get created when loaded
 # pylint:disable=undefined-variable
 
-logger_cache = dict()
+logger_cache = {}
 null_logger = None
 
-
 # pylint:disable=global-statement
-def getLogger(logger_name):
+def getLogger(logger_name: str) -> "Logger":
     """Create or retrieve a logger by name.
 
     :param str logger_name: The name of the `Logger` to create/retrieve. `None`
@@ -170,7 +169,7 @@ class Logger:
         self._level = NOTSET
         self._handler = PrintHandler()
 
-    def setLevel(self, log_level):
+    def setLevel(self, log_level: int):
         """Set the logging cutoff level.
 
         :param int log_level: the lowest level to output
@@ -178,7 +177,7 @@ class Logger:
         """
         self._level = log_level
 
-    def getEffectiveLevel(self):
+    def getEffectiveLevel(self) -> int:
         """Get the effective level for this logger.
 
         :return: the lowest level to output
@@ -186,7 +185,7 @@ class Logger:
         """
         return self._level
 
-    def addHandler(self, handler):
+    def addHandler(self, handler: LoggingHandler):
         """Sets the handler of this logger to the specified handler.
         *NOTE* this is slightly different from the CPython equivalent which adds
         the handler rather than replacing it.
@@ -196,7 +195,7 @@ class Logger:
         """
         self._handler = handler
 
-    def log(self, log_level, format_string, *args):
+    def log(self, log_level: int, format_string: str, *args):
         """Log a message.
 
         :param int log_level: the priority level at which to log
@@ -208,7 +207,7 @@ class Logger:
         if log_level >= self._level:
             self._handler.emit(log_level, format_string % args)
 
-    def debug(self, format_string, *args):
+    def debug(self, format_string: str, *args):
         """Log a debug message.
 
         :param str format_string: the core message string with embedded
@@ -218,7 +217,7 @@ class Logger:
         """
         self.log(DEBUG, format_string, *args)
 
-    def info(self, format_string, *args):
+    def info(self, format_string: str, *args):
         """Log a info message.
 
         :param str format_string: the core message string with embedded
@@ -228,7 +227,7 @@ class Logger:
         """
         self.log(INFO, format_string, *args)
 
-    def warning(self, format_string, *args):
+    def warning(self, format_string: str, *args):
         """Log a warning message.
 
         :param str format_string: the core message string with embedded
@@ -238,7 +237,7 @@ class Logger:
         """
         self.log(WARNING, format_string, *args)
 
-    def error(self, format_string, *args):
+    def error(self, format_string: str, *args):
         """Log a error message.
 
         :param str format_string: the core message string with embedded
@@ -248,7 +247,7 @@ class Logger:
         """
         self.log(ERROR, format_string, *args)
 
-    def critical(self, format_string, *args):
+    def critical(self, format_string: str, *args):
         """Log a critical message.
 
         :param str format_string: the core message string with embedded
@@ -267,30 +266,30 @@ class NullLogger:
     def __init__(self):
         """Dummy implementation."""
 
-    def setLevel(self, log_level):
+    def setLevel(self, log_level: int):
         """Dummy implementation."""
 
-    def getEffectiveLevel(self):
+    def getEffectiveLevel(self) -> int:
         """Dummy implementation."""
         return NOTSET
 
-    def addHandler(self, handler):
+    def addHandler(self, handler: LoggingHandler):
         """Dummy implementation."""
 
-    def log(self, log_level, format_string, *args):
+    def log(self, log_level: int, format_string: str, *args):
         """Dummy implementation."""
 
-    def debug(self, format_string, *args):
+    def debug(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def info(self, format_string, *args):
+    def info(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def warning(self, format_string, *args):
+    def warning(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def error(self, format_string, *args):
+    def error(self, format_string: str, *args):
         """Dummy implementation."""
 
-    def critical(self, format_string, *args):
+    def critical(self, format_string: str, *args):
         """Dummy implementation."""
