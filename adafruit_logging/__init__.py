@@ -111,7 +111,7 @@ class LoggingHandler:
         :param str message: the message to log
 
         """
-        return "{0}: {1} - {2}".format(time.monotonic(), level_for(log_level), message)
+        return "{0:<0.3f}: {1} - {2}".format(time.monotonic(), level_for(log_level), message)
 
     def emit(self, log_level: int, message: str):
         """Send a message where it should go.
