@@ -104,7 +104,7 @@ def _level_for(value: int) -> str:
 class LoggingHandler:
     """Abstract logging message handler."""
 
-    def format(self, log_level: int, message: str) -> str:
+    def _format(self, log_level: int, message: str) -> str:
         """Generate a timestamped message.
 
         :param int log_level: the logging level
@@ -132,7 +132,7 @@ class PrintHandler(LoggingHandler):
         :param str message: the message to log
 
         """
-        print(self.format(log_level, message))
+        print(self._format(log_level, message))
 
 
 # The level module-global variables get created when loaded

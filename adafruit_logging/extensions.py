@@ -34,13 +34,13 @@ class FileHandler(LoggingHandler):
         """Closes the file"""
         self.logfile.close()
 
-    def format(self, log_level: int, message: str):
+    def _format(self, log_level: int, message: str):
         """Generate a string to log
 
         :param level: The level of the message
         :param msg: The message to format
         """
-        return super().format(log_level, message) + "\r\n"
+        return super()._format(log_level, message) + "\r\n"
 
     def emit(self, log_level: int, message: str):
         """Generate the message and write it to the UART.
@@ -48,4 +48,4 @@ class FileHandler(LoggingHandler):
         :param level: The level of the message
         :param msg: The message to log
         """
-        self.logfile.write(self.format(log_level, message))
+        self.logfile.write(self._format(log_level, message))
