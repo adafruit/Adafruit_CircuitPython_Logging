@@ -20,7 +20,7 @@ logger.error("Error message")
 
 # This should produce no output
 
-null_logger = logging.getLogger(None)
+null_logger = logging.getLogger("null")
 null_handler = logging.NullHandler()
 null_logger.addHandler(null_handler)
 
