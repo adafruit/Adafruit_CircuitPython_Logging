@@ -282,14 +282,11 @@ class Logger:
         self.log(CRITICAL, msg, *args)
 
 
+class NullHandler(Handler):
+    """Provide an empty log handler.
 
-class NullLogger:
-    """Provide an empty logger.
-    This can be used in place of a real logger to more efficiently disable
+    This can be used in place of a real log handler to more efficiently disable
     logging."""
-
-    def __init__(self):
-        """Dummy implementation."""
 
     def setLevel(self, log_level: int):
         """Dummy implementation."""
