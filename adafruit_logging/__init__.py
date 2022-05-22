@@ -204,8 +204,9 @@ class Logger:
         """
         return self._level
 
-    def addHandler(self, handler: LoggingHandler):
+    def addHandler(self, handler: Handler):
         """Sets the handler of this logger to the specified handler.
+
         *NOTE* this is slightly different from the CPython equivalent which adds
         the handler rather than replacing it.
 
