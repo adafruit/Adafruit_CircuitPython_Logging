@@ -131,7 +131,7 @@ class Handler:
 class StreamHandler(Handler):
     """Send logging messages to a stream, `sys.stderr` (typically
     the serial console) by default.
-    
+
     :param stream: The stream to log to, default is `sys.stderr`
     """
 
@@ -141,7 +141,7 @@ class StreamHandler(Handler):
             stream = sys.stderr
         self.stream = stream
         """The stream to log to"""
-    
+
     def _emit(self, log_level: int, message: str):
         """Send a message to the console.
 
@@ -157,10 +157,12 @@ class StreamHandler(Handler):
 
 logger_cache = {}
 
+
 def _addLogger(logger_name: str):
     """Adds the logger if it doesn't already exist"""
     if logger_name not in logger_cache:
         logger_cache[logger_name] = Logger(logger_name)
+
 
 # pylint:disable=global-statement
 def getLogger(logger_name: str) -> "Logger":
@@ -350,4 +352,3 @@ class FileHandler(StreamHandler):
         :param msg: The message to log
         """
         self.logfile.write(self._format(log_level, message))
-
