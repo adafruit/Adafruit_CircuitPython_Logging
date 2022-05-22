@@ -102,10 +102,11 @@ def _level_for(value: int) -> str:
     return LEVELS[0][1]
 
 
+#  pylint: disable=too-few-public-methods
 class Handler:
     """Abstract logging message handler."""
 
-    def __init__(self, level=NOTSET):
+    def __init__(self, level=NOTSET):  # pylint: disable=undefined-variable
         self.level = level
         """Level of the handler; this is currently unused, and
         only the level of the logger is used"""
@@ -128,6 +129,7 @@ class Handler:
         raise NotImplementedError()
 
 
+#  pylint: disable=too-few-public-methods
 class StreamHandler(Handler):
     """Send logging messages to a stream, `sys.stderr` (typically
     the serial console) by default.
@@ -136,7 +138,7 @@ class StreamHandler(Handler):
     """
 
     def __init__(self, stream=None):
-        super.__init__(self)
+        super().__init__()
         if stream is None:
             stream = sys.stderr
         self.stream = stream
@@ -232,7 +234,7 @@ class Logger:
 
         """
         if level >= self._level:
-            self._handler._emit(level, msg % args)
+            self._handler._emit(level, msg % args)  #  pylint: disable=protected-access
 
     def debug(self, msg: str, *args):
         """Log a debug message.
@@ -319,6 +321,9 @@ class NullHandler(Handler):
     def critical(self, format_string: str, *args):
         """Dummy implementation."""
 
+    def _emit(self, log_level: int, message: str):
+        """Dummy implementation"""
+
 
 class FileHandler(StreamHandler):
     """File handler for working with log files off of the microcontroller (like
@@ -329,13 +334,12 @@ class FileHandler(StreamHandler):
     """
 
     def __init__(self, filename: str, mode: str = "a") -> None:
-        self.logfile = open(  # pylint: disable=consider-using-with
-            filename, mode, encoding="utf-8"
-        )
+        # pylint: disable=consider-using-with
+        super().__init__(open(filename, mode=mode))
 
     def close(self):
         """Closes the file"""
-        self.logfile.close()
+        self.stream.close()
 
     def _format(self, log_level: int, message: str):
         """Generate a string to log
@@ -351,4 +355,4 @@ class FileHandler(StreamHandler):
         :param level: The level of the message
         :param msg: The message to log
         """
-        self.logfile.write(self._format(log_level, message))
+        self.stream.write(self._format(log_level, message))
