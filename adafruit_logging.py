@@ -305,19 +305,19 @@ class NullHandler(Handler):
     def log(self, log_level: int, format_string: str, *args):
         """Dummy implementation."""
 
-    def debug(self, format_string: str, *args):
+    def debug(self, msg: str, *args):
         """Dummy implementation."""
 
-    def info(self, format_string: str, *args):
+    def info(self, msg: str, *args):
         """Dummy implementation."""
 
-    def warning(self, format_string: str, *args):
+    def warning(self, msg: str, *args):
         """Dummy implementation."""
 
-    def error(self, format_string: str, *args):
+    def error(self, msg: str, *args):
         """Dummy implementation."""
 
-    def critical(self, format_string: str, *args):
+    def critical(self, msg: str, *args):
         """Dummy implementation."""
 
     def _emit(self, log_level: int, message: str):
