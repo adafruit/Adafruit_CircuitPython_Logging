@@ -63,7 +63,7 @@ __all__ = [
     "WARNING",
     "ERROR",
     "CRITICAL",
-    "level_for",
+    "_level_for",
     "LoggingHandler",
     "PrintHandler",
     "logger_cache",
@@ -87,7 +87,7 @@ for __value, __name in LEVELS:
     globals()[__name] = __value
 
 
-def level_for(value: int) -> str:
+def _level_for(value: int) -> str:
     """Convert a numeric level to the most appropriate name.
 
     :param int value: a numeric level
@@ -112,7 +112,7 @@ class LoggingHandler:
 
         """
         return "{0:<0.3f}: {1} - {2}".format(
-            time.monotonic(), level_for(log_level), message
+            time.monotonic(), _level_for(log_level), message
         )
 
     def emit(self, log_level: int, message: str):
