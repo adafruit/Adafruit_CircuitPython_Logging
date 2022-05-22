@@ -170,8 +170,7 @@ def _addLogger(logger_name: str):
 def getLogger(logger_name: str) -> "Logger":
     """Create or retrieve a logger by name
 
-    :param str logger_name: The name of the `Logger` to create/retrieve. `None`
-                            will cause the `NullLogger` instance to be returned.
+    :param str logger_name: The name of the `Logger` to create/retrieve.
 
     """
     _addLogger(logger_name)
