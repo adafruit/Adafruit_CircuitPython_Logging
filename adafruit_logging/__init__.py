@@ -215,7 +215,11 @@ class Logger:
         """
         self._handler = handler
 
-    def log(self, log_level: int, format_string: str, *args):
+    def hasHandlers(self) -> bool:
+        """Whether any handlers have been set for this logger"""
+        return self._handler is not None
+
+    def log(self, level: int, msg: str, *args):
         """Log a message.
 
         :param int log_level: the priority level at which to log
