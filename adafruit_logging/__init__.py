@@ -222,64 +222,65 @@ class Logger:
     def log(self, level: int, msg: str, *args):
         """Log a message.
 
-        :param int log_level: the priority level at which to log
-        :param str format_string: the core message string with embedded
+        :param int level: the priority level at which to log
+        :param str msg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        if log_level >= self._level:
-            self._handler.emit(log_level, format_string % args)
+        if level >= self._level:
+            self._handler._emit(level, msg % args)
 
-    def debug(self, format_string: str, *args):
+    def debug(self, msg: str, *args):
         """Log a debug message.
 
-        :param str format_string: the core message string with embedded
+        :param str fmsg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        self.log(DEBUG, format_string, *args)
+        self.log(DEBUG, msg, *args)
 
-    def info(self, format_string: str, *args):
+    def info(self, msg: str, *args):
         """Log a info message.
 
-        :param str format_string: the core message string with embedded
+        :param str msg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        self.log(INFO, format_string, *args)
+        self.log(INFO, msg, *args)
 
-    def warning(self, format_string: str, *args):
+    def warning(self, msg: str, *args):
         """Log a warning message.
 
-        :param str format_string: the core message string with embedded
+        :param str msg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        self.log(WARNING, format_string, *args)
+        self.log(WARNING, msg, *args)
 
-    def error(self, format_string: str, *args):
+    def error(self, msg: str, *args):
         """Log a error message.
 
-        :param str format_string: the core message string with embedded
+        :param str msg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        self.log(ERROR, format_string, *args)
+        self.log(ERROR, msg, *args)
 
-    def critical(self, format_string: str, *args):
+    def critical(self, msg: str, *args):
         """Log a critical message.
 
-        :param str format_string: the core message string with embedded
+        :param str msg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        self.log(CRITICAL, format_string, *args)
+        self.log(CRITICAL, msg, *args)
+
 
 
 class NullLogger:
