@@ -101,8 +101,13 @@ def _level_for(value: int) -> str:
     return LEVELS[0][1]
 
 
-class LoggingHandler:
+class Handler:
     """Abstract logging message handler."""
+
+    def __init__(self, level=NOTSET):
+        self.level = level
+        """Level of the handler; this is currently unused, and
+        only the level of the logger is used"""
 
     def _format(self, log_level: int, message: str) -> str:
         """Generate a timestamped message.
@@ -115,7 +120,7 @@ class LoggingHandler:
             time.monotonic(), _level_for(log_level), message
         )
 
-    def emit(self, log_level: int, message: str):
+    def _emit(self, log_level: int, message: str):
         """Send a message where it should go.
         Placeholder for subclass implementations.
         """
