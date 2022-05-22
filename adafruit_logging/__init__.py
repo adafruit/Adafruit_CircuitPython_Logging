@@ -163,15 +163,13 @@ def _addLogger(logger_name: str):
 
 # pylint:disable=global-statement
 def getLogger(logger_name: str) -> "Logger":
-    """Create or retrieve a logger by name. Only caches loggers
-    made using this function, and does not cache any made directly.
+    """Create or retrieve a logger by name
 
     :param str logger_name: The name of the `Logger` to create/retrieve. `None`
                             will cause the `NullLogger` instance to be returned.
 
     """
-    if logger_name not in logger_cache:
-        logger_cache[logger_name] = Logger(logger_name)
+    _addLogger(logger_name)
     return logger_cache.get(logger_name, None)
 
 
