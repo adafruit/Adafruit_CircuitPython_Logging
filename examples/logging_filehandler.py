@@ -28,3 +28,6 @@ logger.setLevel(logging.INFO)
 
 logger.info("Logger initialized!")
 logger.debug("You can even add debug statements to the log!")
+
+# If you're done with the FileHandler, close it
+file_handler.close()
