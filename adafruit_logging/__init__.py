@@ -51,6 +51,7 @@ Attributes
 # pylint:disable=invalid-name
 
 import time
+import sys
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
@@ -64,13 +65,13 @@ __all__ = [
     "ERROR",
     "CRITICAL",
     "_level_for",
-    "LoggingHandler",
-    "PrintHandler",
+    "Handler",
+    "StreamHandler",
     "logger_cache",
-    "null_logger",
     "getLogger",
     "Logger",
-    "NullLogger",
+    "NullHandler",
+    "FileHandler",
 ]
 
 
@@ -315,3 +316,38 @@ class NullHandler(Handler):
 
     def critical(self, format_string: str, *args):
         """Dummy implementation."""
+
+
+class FileHandler(StreamHandler):
+    """File handler for working with log files off of the microcontroller (like
+    an SD card)
+
+    :param str filename: The filename of the log file
+    :param str mode: Whether to write ('w') or append ('a'); default is to append
+    """
+
+    def __init__(self, filename: str, mode: str = "a") -> None:
+        self.logfile = open(  # pylint: disable=consider-using-with
+            filename, mode, encoding="utf-8"
+        )
+
+    def close(self):
+        """Closes the file"""
+        self.logfile.close()
+
+    def _format(self, log_level: int, message: str):
+        """Generate a string to log
+
+        :param level: The level of the message
+        :param msg: The message to format
+        """
+        return super()._format(log_level, message) + "\r\n"
+
+    def _emit(self, log_level: int, message: str):
+        """Generate the message and write it to the UART.
+
+        :param level: The level of the message
+        :param msg: The message to log
+        """
+        self.logfile.write(self._format(log_level, message))
+
