@@ -168,7 +168,8 @@ def _addLogger(logger_name: str):
 
 # pylint:disable=global-statement
 def getLogger(logger_name: str) -> "Logger":
-    """Create or retrieve a logger by name
+    """Create or retrieve a logger by name; only retrieves loggers
+    made using this function
 
     :param str logger_name: The name of the `Logger` to create/retrieve.
 
@@ -190,7 +191,6 @@ class Logger:
         """The name of the logger, this should be unique for proper
         functionality of `getLogger()`"""
         self._handler = None
-        _addLogger(name)
 
     def setLevel(self, log_level: int):
         """Set the logging cutoff level.
