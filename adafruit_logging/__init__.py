@@ -155,25 +155,19 @@ class StreamHandler(Handler):
 # pylint:disable=undefined-variable
 
 logger_cache = {}
-null_logger = None
 
 # pylint:disable=global-statement
 def getLogger(logger_name: str) -> "Logger":
-    """Create or retrieve a logger by name.
+    """Create or retrieve a logger by name. Only caches loggers
+    made using this function, and does not cache any made directly.
 
     :param str logger_name: The name of the `Logger` to create/retrieve. `None`
                             will cause the `NullLogger` instance to be returned.
 
     """
-    global null_logger
-    if not logger_name or logger_name == "":
-        if not null_logger:
-            null_logger = NullLogger()
-        return null_logger
-
     if logger_name not in logger_cache:
-        logger_cache[logger_name] = Logger()
-    return logger_cache[logger_name]
+        logger_cache[logger_name] = Logger(logger_name)
+    return logger_cache.get(logger_name, None)
 
 
 # pylint:enable=global-statement
