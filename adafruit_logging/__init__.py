@@ -179,10 +179,14 @@ def getLogger(logger_name: str) -> "Logger":
 class Logger:
     """Provide a logging api."""
 
-    def __init__(self):
+    def __init__(self, name: str, level=NOTSET):
         """Create an instance."""
-        self._level = NOTSET
-        self._handler = PrintHandler()
+        self._level = level
+        self.name = name
+        """The name of the logger, this should be unique for proper
+        functionality of `getLogger()`"""
+        self._handler = None
+        _addLogger(name)
 
     def setLevel(self, log_level: int):
         """Set the logging cutoff level.
