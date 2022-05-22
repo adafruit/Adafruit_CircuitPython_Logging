@@ -127,10 +127,21 @@ class Handler:
         raise NotImplementedError()
 
 
-class PrintHandler(LoggingHandler):
-    """Send logging messages to the console by using print."""
+class StreamHandler(Handler):
+    """Send logging messages to a stream, `sys.stderr` (typically
+    the serial console) by default.
+    
+    :param stream: The stream to log to, default is `sys.stderr`
+    """
 
-    def emit(self, log_level: int, message: str):
+    def __init__(self, stream=None):
+        super.__init__(self)
+        if stream is None:
+            stream = sys.stderr
+        self.stream = stream
+        """The stream to log to"""
+    
+    def _emit(self, log_level: int, message: str):
         """Send a message to the console.
 
         :param int log_level: the logging level
