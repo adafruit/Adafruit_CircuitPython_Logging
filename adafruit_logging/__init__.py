@@ -295,7 +295,7 @@ class NullHandler(Handler):
         """Dummy implementation."""
         return NOTSET
 
-    def addHandler(self, handler: LoggingHandler):
+    def addHandler(self, handler: Handler):
         """Dummy implementation."""
 
     def log(self, log_level: int, format_string: str, *args):
