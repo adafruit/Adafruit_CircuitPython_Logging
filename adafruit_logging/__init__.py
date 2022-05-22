@@ -156,6 +156,11 @@ class StreamHandler(Handler):
 
 logger_cache = {}
 
+def _addLogger(logger_name: str):
+    """Adds the logger if it doesn't already exist"""
+    if logger_name not in logger_cache:
+        logger_cache[logger_name] = Logger(logger_name)
+
 # pylint:disable=global-statement
 def getLogger(logger_name: str) -> "Logger":
     """Create or retrieve a logger by name. Only caches loggers
