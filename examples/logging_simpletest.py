@@ -19,14 +19,7 @@ logger.error("Error message")
 # This should produce no output
 
 null_logger = logging.getLogger(None)
-
-null_logger.setLevel(logging.ERROR)
-null_logger.info("Info message")
-null_logger.error("Error message")
-
-# This should produce no output
-
-null_logger = logging.getLogger("")
+null_logger.addHandler(logging.NullHandler)
 
 null_logger.setLevel(logging.ERROR)
 null_logger.info("Info message")
