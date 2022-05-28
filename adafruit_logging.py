@@ -208,7 +208,7 @@ class Logger:
         """
         return self._level
 
-    def addHandler(self, handler: Handler):
+    def addHandler(self, hdlr: Handler):
         """Sets the handler of this logger to the specified handler.
 
         *NOTE* this is slightly different from the CPython equivalent which adds
@@ -217,7 +217,7 @@ class Logger:
         :param LoggingHandler handler: the handler
 
         """
-        self._handler = handler
+        self._handler = hdlr
 
     def hasHandlers(self) -> bool:
         """Whether any handlers have been set for this logger"""
