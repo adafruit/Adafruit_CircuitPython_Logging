@@ -50,5 +50,5 @@ setup(
     keywords="adafruit blinka circuitpython micropython logging logger",
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=["adafruit_logging"],
+    py_modules=["adafruit_logging"],
 )
