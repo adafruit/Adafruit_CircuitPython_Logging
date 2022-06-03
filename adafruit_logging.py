@@ -215,7 +215,7 @@ class Logger:
         *NOTE* this is slightly different from the CPython equivalent which adds
         the handler rather than replacing it.
 
-        :param LoggingHandler handler: the handler
+        :param Handler hdlr: the handler
 
         """
         self._handler = hdlr
