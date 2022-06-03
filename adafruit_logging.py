@@ -233,7 +233,7 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        if _handler and level >= self._level:
+        if self._handler and level >= self._level:
             self._handler._emit(level, msg % args)  #  pylint: disable=protected-access
 
     def debug(self, msg: str, *args):
