@@ -215,7 +215,7 @@ class Logger:
         *NOTE* this is slightly different from the CPython equivalent which adds
         the handler rather than replacing it.
 
-        :param LoggingHandler handler: the handler
+        :param Handler hdlr: the handler
 
         """
         self._handler = hdlr
@@ -233,7 +233,7 @@ class Logger:
         :param args: arguments to ``format_string.format()``; can be empty
 
         """
-        if level >= self._level:
+        if self._handler and level >= self._level:
             self._handler._emit(level, msg % args)  #  pylint: disable=protected-access
 
     def debug(self, msg: str, *args):
