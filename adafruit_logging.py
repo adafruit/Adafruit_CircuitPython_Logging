@@ -9,7 +9,7 @@
 Logging module for CircuitPython
 
 
-* Author(s): Dave Astels
+* Author(s): Dave Astels, Alec Delaney
 
 Implementation Notes
 --------------------
