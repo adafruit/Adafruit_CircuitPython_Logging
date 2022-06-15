@@ -46,6 +46,13 @@ Attributes
         The CRITICAL logging level, which is the highest (most severe) level for
         unrecoverable errors that have caused the code to halt and exit.
 
+.. note::
+
+    This module has a few key differences compared to its CPython counterpart, notably
+    that loggers can only be assigned one handler at a time.  Calling ``addHander()``
+    replaces the currently stored handler for that logger.  Additionally, the default
+    formatting for handlers is different.
+
 """
 # pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
 # pylint:disable=invalid-name
