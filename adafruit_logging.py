@@ -136,7 +136,6 @@ _logRecordFactory = lambda name, level, msg, args: LogRecord(
 )
 
 
-#  pylint: disable=too-few-public-methods
 class Handler:
     """Abstract logging message handler."""
 
@@ -245,7 +244,6 @@ def _addLogger(logger_name: str) -> None:
         logger_cache[logger_name] = Logger(logger_name)
 
 
-# pylint:disable=global-statement
 def getLogger(logger_name: str) -> "Logger":
     """Create or retrieve a logger by name; only retrieves loggers
     made using this function; if a Logger with this name does not
