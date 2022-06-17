@@ -64,7 +64,7 @@ from collections import namedtuple
 try:
     from typing import Optional, Union
     from io import TextIOWrapper, StringIO
-except:
+except ImportError:
     pass
 
 __version__ = "0.0.0-auto.0"
