@@ -116,6 +116,25 @@ def _level_for(value: int) -> str:
     return LEVELS[0][1]
 
 
+LogRecord = namedtuple(
+    "_LogRecord", ("name", "levelno", "levelname", "msg", "created", "args")
+)
+"""An object used to hold the contents of a log record.  The following attributes can
+be retrieved from it:
+
+- ``name`` - The name of the logger
+- ``levelno`` - The log level number
+- ``levelname`` - The log level name
+- ``msg`` - The log message
+- ``created`` - When the log record was created
+- ``args`` - The additional positional arguments provided
+"""
+
+_logRecordFactory = lambda name, level, msg, args: LogRecord(
+    name, level, _level_for(level), msg, time.monotonic(), args
+)
+
+
 #  pylint: disable=too-few-public-methods
 class Handler:
     """Abstract logging message handler."""
