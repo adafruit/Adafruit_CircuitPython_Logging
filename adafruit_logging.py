@@ -258,9 +258,6 @@ def getLogger(logger_name: str) -> "Logger":
     return logger_cache[logger_name]
 
 
-# pylint:enable=global-statement
-
-
 class Logger:
     """Provide a logging api."""
 
