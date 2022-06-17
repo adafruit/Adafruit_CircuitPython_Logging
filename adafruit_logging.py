@@ -78,7 +78,6 @@ __all__ = [
     "WARNING",
     "ERROR",
     "CRITICAL",
-    "_level_for",
     "Handler",
     "StreamHandler",
     "logger_cache",
@@ -86,6 +85,7 @@ __all__ = [
     "Logger",
     "NullHandler",
     "FileHandler",
+    "LogRecord",
 ]
 
 # The level module-global variables get created when loaded
