@@ -108,7 +108,6 @@ def _level_for(value: int) -> str:
     """Convert a numeric level to the most appropriate name.
 
     :param int value: a numeric level
-
     """
     for i, level in enumerate(LEVELS):
         if value == level[0]:
@@ -154,8 +153,8 @@ class Handler:
 
         :param int log_level: the logging level
         :param str message: the message to log
-
         """
+
         return "{0:<0.3f}: {1} - {2}".format(
             record.created, record.levelname, record.msg
         )
@@ -164,6 +163,7 @@ class Handler:
         """Send a message where it should go.
         Placeholder for subclass implementations.
         """
+
         raise NotImplementedError()
 
 
@@ -187,7 +187,6 @@ class StreamHandler(Handler):
 
         :param int log_level: the logging level
         :param str message: the message to log
-
         """
         self.stream.write(self.format(record))
 
@@ -292,7 +291,6 @@ class Logger:
         which adds the handler rather than replacing it.
 
         :param Handler hdlr: the handler
-
         """
         self._handler = hdlr
 
