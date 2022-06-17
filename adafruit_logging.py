@@ -305,7 +305,7 @@ class Logger:
         :param int level: the priority level at which to log
         :param str msg: the core message string with embedded
             formatting directives
-        :param args: arguments to ``format_string.format()``;
+        :param args: arguments to ``msg % args``;
             can be empty
         """
 
@@ -316,7 +316,7 @@ class Logger:
 
         :param str fmsg: the core message string with embedded
             formatting directives
-        :param args: arguments to ``format_string.format()``;
+        :param args: arguments to ``msg % args``;
             can be empty
         """
         self._log(DEBUG, msg, *args)
@@ -326,7 +326,7 @@ class Logger:
 
         :param str msg: the core message string with embedded
             formatting directives
-        :param args: arguments to ``format_string.format()``;
+        :param args: arguments to ``msg % args``;
             can be empty
         """
 
@@ -337,7 +337,7 @@ class Logger:
 
         :param str msg: the core message string with embedded
             formatting directives
-        :param args: arguments to ``format_string.format()``;
+        :param args: arguments to ``msg % args``;
             can be empty
         """
 
@@ -348,7 +348,7 @@ class Logger:
 
         :param str msg: the core message string with embedded
             formatting directives
-        :param args: arguments to ``format_string.format()``;
+        :param args: arguments to ``msg % args``;
             can be empty
         """
 
@@ -359,7 +359,7 @@ class Logger:
 
         :param str msg: the core message string with embedded
             formatting directives
-        :param args: arguments to ``format_string.format()``;
+        :param args: arguments to ``msg % args``;
             can be empty
         """
         self._log(CRITICAL, msg, *args)
