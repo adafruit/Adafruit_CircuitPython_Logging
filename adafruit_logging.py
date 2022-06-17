@@ -22,6 +22,13 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
 
+.. note::
+
+    This module has a few key differences compared to its CPython counterpart, notably
+    that loggers can only be assigned one handler at a time.  Calling ``addHander()``
+    replaces the currently stored handler for that logger.  Additionally, the default
+    formatting for handlers is different.
+
 Attributes
 ----------
     LEVELS : list
@@ -45,13 +52,6 @@ Attributes
     CRITICAL : int
         The CRITICAL logging level, which is the highest (most severe) level for
         unrecoverable errors that have caused the code to halt and exit.
-
-.. note::
-
-    This module has a few key differences compared to its CPython counterpart, notably
-    that loggers can only be assigned one handler at a time.  Calling ``addHander()``
-    replaces the currently stored handler for that logger.  Additionally, the default
-    formatting for handlers is different.
 
 """
 
