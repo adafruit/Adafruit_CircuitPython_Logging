@@ -108,10 +108,10 @@ def _level_for(value: int) -> str:
     :param int value: a numeric level
 
     """
-    for i in range(len(LEVELS)):
-        if value == LEVELS[i][0]:
-            return LEVELS[i][1]
-        if value < LEVELS[i][0]:
+    for i, level in enumerate(LEVELS):
+        if value == level[0]:
+            return level[1]
+        if value < level[0]:
             return LEVELS[i - 1][1]
     return LEVELS[0][1]
 
