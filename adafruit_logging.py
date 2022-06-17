@@ -139,12 +139,15 @@ _logRecordFactory = lambda name, level, msg, args: LogRecord(
 class Handler:
     """Abstract logging message handler."""
 
-    def __init__(self, level=NOTSET):  # pylint: disable=undefined-variable
+    def __init__(
+        self, level: int = NOTSET
+    ) -> None:  # pylint: disable=undefined-variable
         self.level = level
         """Level of the handler; this is currently unused, and
         only the level of the logger is used"""
 
-    def _format(self, log_level: int, message: str) -> str:
+    # pylint: disable=no-self-use
+    def format(self, record: LogRecord) -> str:
         """Generate a timestamped message.
 
         :param int log_level: the logging level
@@ -152,10 +155,10 @@ class Handler:
 
         """
         return "{0:<0.3f}: {1} - {2}".format(
-            time.monotonic(), _level_for(log_level), message
+            record.created, record.levelname, record.msg
         )
 
-    def _emit(self, log_level: int, message: str):
+    def emit(self, record: LogRecord) -> None:
         """Send a message where it should go.
         Placeholder for subclass implementations.
         """
@@ -170,21 +173,21 @@ class StreamHandler(Handler):
     :param stream: The stream to log to, default is `sys.stderr`
     """
 
-    def __init__(self, stream=None):
+    def __init__(self, stream: Optional[Union[TextIOWrapper, StringIO]] = None) -> None:
         super().__init__()
         if stream is None:
             stream = sys.stderr
         self.stream = stream
         """The stream to log to"""
 
-    def _emit(self, log_level: int, message: str):
+    def emit(self, record: LogRecord) -> None:
         """Send a message to the console.
 
         :param int log_level: the logging level
         :param str message: the message to log
 
         """
-        print(self._format(log_level, message))
+        self.stream.write(self.format(record))
 
 
 # The level module-global variables get created when loaded
@@ -193,7 +196,7 @@ class StreamHandler(Handler):
 logger_cache = {}
 
 
-def _addLogger(logger_name: str):
+def _addLogger(logger_name: str) -> None:
     """Adds the logger if it doesn't already exist"""
     if logger_name not in logger_cache:
         logger_cache[logger_name] = Logger(logger_name)
@@ -206,7 +209,6 @@ def getLogger(logger_name: str) -> "Logger":
     exist it is created
 
     :param str logger_name: The name of the `Logger` to create/retrieve.
-
     """
     _addLogger(logger_name)
     return logger_cache[logger_name]
@@ -218,7 +220,7 @@ def getLogger(logger_name: str) -> "Logger":
 class Logger:
     """Provide a logging api."""
 
-    def __init__(self, name: str, level=NOTSET):
+    def __init__(self, name: str, level: int = NOTSET) -> None:
         """Create an instance."""
         self._level = level
         self.name = name
@@ -226,27 +228,27 @@ class Logger:
         functionality of `getLogger()`"""
         self._handler = None
 
-    def setLevel(self, log_level: int):
+    def setLevel(self, log_level: int) -> None:
         """Set the logging cutoff level.
 
         :param int log_level: the lowest level to output
-
         """
+
         self._level = log_level
 
     def getEffectiveLevel(self) -> int:
         """Get the effective level for this logger.
 
         :return: the lowest level to output
-
         """
+
         return self._level
 
-    def addHandler(self, hdlr: Handler):
+    def addHandler(self, hdlr: Handler) -> None:
         """Sets the handler of this logger to the specified handler.
 
-        *NOTE* this is slightly different from the CPython equivalent which adds
-        the handler rather than replacing it.
+        *NOTE* This is slightly different from the CPython equivalent
+        which adds the handler rather than replacing it.
 
         :param Handler hdlr: the handler
 
@@ -257,104 +259,87 @@ class Logger:
         """Whether any handlers have been set for this logger"""
         return self._handler is not None
 
-    def log(self, level: int, msg: str, *args):
+    def _log(self, level: int, msg: str, *args) -> None:
+        record = _logRecordFactory(self.name, level, msg % args, args)
+        if self._handler and level >= self._level:
+            self._handler.emit(record)
+
+    def log(self, level: int, msg: str, *args) -> None:
         """Log a message.
 
         :param int level: the priority level at which to log
         :param str msg: the core message string with embedded
                                   formatting directives
         :param args: arguments to ``format_string.format()``; can be empty
-
         """
-        if self._handler and level >= self._level:
-            self._handler._emit(level, msg % args)  #  pylint: disable=protected-access
 
-    def debug(self, msg: str, *args):
+        self._log(level, msg, *args)
+
+    def debug(self, msg: str, *args) -> None:
         """Log a debug message.
 
         :param str fmsg: the core message string with embedded
-                                  formatting directives
-        :param args: arguments to ``format_string.format()``; can be empty
-
+            formatting directives
+        :param args: arguments to ``format_string.format()``;
+            can be empty
         """
-        self.log(DEBUG, msg, *args)
+        self._log(DEBUG, msg, *args)
 
-    def info(self, msg: str, *args):
+    def info(self, msg: str, *args) -> None:
         """Log a info message.
 
         :param str msg: the core message string with embedded
-                                  formatting directives
-        :param args: arguments to ``format_string.format()``; can be empty
-
+            formatting directives
+        :param args: arguments to ``format_string.format()``;
+            can be empty
         """
-        self.log(INFO, msg, *args)
 
-    def warning(self, msg: str, *args):
+        self._log(INFO, msg, *args)
+
+    def warning(self, msg: str, *args) -> None:
         """Log a warning message.
 
         :param str msg: the core message string with embedded
-                                  formatting directives
-        :param args: arguments to ``format_string.format()``; can be empty
-
+            formatting directives
+        :param args: arguments to ``format_string.format()``;
+            can be empty
         """
-        self.log(WARNING, msg, *args)
 
-    def error(self, msg: str, *args):
+        self._log(WARNING, msg, *args)
+
+    def error(self, msg: str, *args) -> None:
         """Log a error message.
 
         :param str msg: the core message string with embedded
-                                  formatting directives
-        :param args: arguments to ``format_string.format()``; can be empty
-
+            formatting directives
+        :param args: arguments to ``format_string.format()``;
+            can be empty
         """
-        self.log(ERROR, msg, *args)
 
-    def critical(self, msg: str, *args):
+        self._log(ERROR, msg, *args)
+
+    def critical(self, msg: str, *args) -> None:
         """Log a critical message.
 
         :param str msg: the core message string with embedded
-                                  formatting directives
-        :param args: arguments to ``format_string.format()``; can be empty
-
+            formatting directives
+        :param args: arguments to ``format_string.format()``;
+            can be empty
         """
-        self.log(CRITICAL, msg, *args)
+        self._log(CRITICAL, msg, *args)
 
 
 class NullHandler(Handler):
     """Provide an empty log handler.
 
     This can be used in place of a real log handler to more efficiently disable
-    logging."""
+    logging.
+    """
 
-    def setLevel(self, log_level: int):
-        """Dummy implementation."""
+    def format(self, record: LogRecord) -> str:
+        """Dummy implementation"""
 
-    def getEffectiveLevel(self) -> int:
-        """Dummy implementation."""
-        return NOTSET
-
-    def addHandler(self, handler: Handler):
-        """Dummy implementation."""
-
-    def log(self, log_level: int, format_string: str, *args):
-        """Dummy implementation."""
-
-    def debug(self, msg: str, *args):
-        """Dummy implementation."""
-
-    def info(self, msg: str, *args):
-        """Dummy implementation."""
-
-    def warning(self, msg: str, *args):
-        """Dummy implementation."""
-
-    def error(self, msg: str, *args):
-        """Dummy implementation."""
-
-    def critical(self, msg: str, *args):
-        """Dummy implementation."""
-
-    def _emit(self, log_level: int, message: str):
+    def emit(self, record: LogRecord) -> None:
         """Dummy implementation"""
 
 
@@ -370,22 +355,22 @@ class FileHandler(StreamHandler):
         # pylint: disable=consider-using-with
         super().__init__(open(filename, mode=mode))
 
-    def close(self):
+    def close(self) -> None:
         """Closes the file"""
         self.stream.close()
 
-    def _format(self, log_level: int, message: str):
+    def format(self, record: LogRecord) -> str:
         """Generate a string to log
 
         :param level: The level of the message
         :param msg: The message to format
         """
-        return super()._format(log_level, message) + "\r\n"
+        return super().format(record) + "\r\n"
 
-    def _emit(self, log_level: int, message: str):
+    def emit(self, record: LogRecord) -> None:
         """Generate the message and write it to the UART.
 
         :param level: The level of the message
         :param msg: The message to log
         """
-        self.stream.write(self._format(log_level, message))
+        self.stream.write(self.format(record))
