@@ -139,13 +139,6 @@ _logRecordFactory = lambda name, level, msg, args: LogRecord(
 class Handler:
     """Abstract logging message handler."""
 
-    def __init__(
-        self, level: int = NOTSET
-    ) -> None:  # pylint: disable=undefined-variable
-        self.level = level
-        """Level of the handler; this is currently unused, and
-        only the level of the logger is used"""
-
     # pylint: disable=no-self-use
     def format(self, record: LogRecord) -> str:
         """Generate a timestamped message.
