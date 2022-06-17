@@ -258,7 +258,12 @@ def getLogger(logger_name: str) -> "Logger":
 
 
 class Logger:
-    """Provide a logging api."""
+    """The actual logger that will provide the logging API.
+
+    :param str name: The name of the logger, typically assigned by the
+        value from `getLogger`
+    :param int level: (optional) The log level, default is ``NOTSET``
+    """
 
     def __init__(self, name: str, level: int = NOTSET) -> None:
         """Create an instance."""
