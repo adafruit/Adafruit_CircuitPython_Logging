@@ -191,6 +191,55 @@ class StreamHandler(Handler):
         """
         self.stream.write(self.format(record))
 
+
+class FileHandler(StreamHandler):
+    """File handler for working with log files off of the microcontroller (like
+    an SD card)
+
+    :param str filename: The filename of the log file
+    :param str mode: Whether to write ('w') or append ('a'); default is to append
+    """
+
+    def __init__(self, filename: str, mode: str = "a") -> None:
+        # pylint: disable=consider-using-with
+        super().__init__(open(filename, mode=mode))
+
+    def close(self) -> None:
+        """Closes the file"""
+        self.stream.flush()
+        self.stream.close()
+
+    def format(self, record: LogRecord) -> str:
+        """Generate a string to log
+
+        :param level: The level of the message
+        :param msg: The message to format
+        """
+        return super().format(record) + "\r\n"
+
+    def emit(self, record: LogRecord) -> None:
+        """Generate the message and write it to the UART.
+
+        :param level: The level of the message
+        :param msg: The message to log
+        """
+        self.stream.write(self.format(record))
+
+
+class NullHandler(Handler):
+    """Provide an empty log handler.
+
+    This can be used in place of a real log handler to more efficiently disable
+    logging.
+    """
+
+    def format(self, record: LogRecord) -> str:
+        """Dummy implementation"""
+
+    def emit(self, record: LogRecord) -> None:
+        """Dummy implementation"""
+
+
 logger_cache = {}
 
 
@@ -325,50 +374,3 @@ class Logger:
             can be empty
         """
         self._log(CRITICAL, msg, *args)
-
-
-class NullHandler(Handler):
-    """Provide an empty log handler.
-
-    This can be used in place of a real log handler to more efficiently disable
-    logging.
-    """
-
-    def format(self, record: LogRecord) -> str:
-        """Dummy implementation"""
-
-    def emit(self, record: LogRecord) -> None:
-        """Dummy implementation"""
-
-
-class FileHandler(StreamHandler):
-    """File handler for working with log files off of the microcontroller (like
-    an SD card)
-
-    :param str filename: The filename of the log file
-    :param str mode: Whether to write ('w') or append ('a'); default is to append
-    """
-
-    def __init__(self, filename: str, mode: str = "a") -> None:
-        # pylint: disable=consider-using-with
-        super().__init__(open(filename, mode=mode))
-
-    def close(self) -> None:
-        """Closes the file"""
-        self.stream.close()
-
-    def format(self, record: LogRecord) -> str:
-        """Generate a string to log
-
-        :param level: The level of the message
-        :param msg: The message to format
-        """
-        return super().format(record) + "\r\n"
-
-    def emit(self, record: LogRecord) -> None:
-        """Generate the message and write it to the UART.
-
-        :param level: The level of the message
-        :param msg: The message to log
-        """
-        self.stream.write(self.format(record))
