@@ -233,9 +233,6 @@ class NullHandler(Handler):
     logging.
     """
 
-    def format(self, record: LogRecord) -> str:
-        """Dummy implementation"""
-
     def emit(self, record: LogRecord) -> None:
         """Dummy implementation"""
 
