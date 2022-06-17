@@ -313,8 +313,9 @@ class Logger:
 
         :param int level: the priority level at which to log
         :param str msg: the core message string with embedded
-                                  formatting directives
-        :param args: arguments to ``format_string.format()``; can be empty
+            formatting directives
+        :param args: arguments to ``format_string.format()``;
+            can be empty
         """
 
         self._log(level, msg, *args)
