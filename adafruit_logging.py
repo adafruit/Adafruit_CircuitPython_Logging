@@ -54,8 +54,8 @@ Attributes
     formatting for handlers is different.
 
 """
-# pylint:disable=redefined-outer-name,consider-using-enumerate,no-self-use
-# pylint:disable=invalid-name
+
+# pylint: disable=invalid-name,undefined-variable
 
 import time
 import sys
