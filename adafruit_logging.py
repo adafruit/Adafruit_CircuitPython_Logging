@@ -88,6 +88,7 @@ __all__ = [
     "FileHandler",
 ]
 
+# The level module-global variables get created when loaded
 
 LEVELS = [
     (00, "NOTSET"),
@@ -188,10 +189,6 @@ class StreamHandler(Handler):
 
         """
         self.stream.write(self.format(record))
-
-
-# The level module-global variables get created when loaded
-# pylint:disable=undefined-variable
 
 logger_cache = {}
 
