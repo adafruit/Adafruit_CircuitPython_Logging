@@ -66,9 +66,13 @@ try:
     from typing_extensions import Protocol
 
     class WriteableStream(Protocol):
+        """Any stream that can ``write`` strings"""
 
         def write(self, buf: str) -> int:
-            ...
+            """Write to the stream
+
+            :param str buf: The string data to write to the stream
+            """
 
 except ImportError:
     pass
