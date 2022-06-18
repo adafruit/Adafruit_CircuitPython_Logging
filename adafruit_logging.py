@@ -143,8 +143,7 @@ class Handler:
     def format(self, record: LogRecord) -> str:
         """Generate a timestamped message.
 
-        :param int log_level: the logging level
-        :param str message: the message to log
+        :param record: The record (message object) to be logged
         """
 
         return "{0:<0.3f}: {1} - {2}".format(
@@ -154,6 +153,8 @@ class Handler:
     def emit(self, record: LogRecord) -> None:
         """Send a message where it should go.
         Placeholder for subclass implementations.
+
+        :param record: The record (message object) to be logged
         """
 
         raise NotImplementedError()
@@ -177,8 +178,7 @@ class StreamHandler(Handler):
     def emit(self, record: LogRecord) -> None:
         """Send a message to the console.
 
-        :param int log_level: the logging level
-        :param str message: the message to log
+        :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
 
@@ -203,16 +203,14 @@ class FileHandler(StreamHandler):
     def format(self, record: LogRecord) -> str:
         """Generate a string to log
 
-        :param level: The level of the message
-        :param msg: The message to format
+        :param record: The record (message object) to be logged
         """
         return super().format(record) + "\r\n"
 
     def emit(self, record: LogRecord) -> None:
         """Generate the message and write it to the UART.
 
-        :param level: The level of the message
-        :param msg: The message to log
+        :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
 
@@ -286,7 +284,7 @@ class Logger:
         *NOTE* This is slightly different from the CPython equivalent
         which adds the handler rather than replacing it.
 
-        :param Handler hdlr: the handler
+        :param Handler hdlr: The handler to add
         """
         self._handler = hdlr
 
