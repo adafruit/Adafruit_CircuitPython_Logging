@@ -34,6 +34,7 @@ setup(
     author_email="circuitpython@adafruit.com",
     install_requires=[
         "Adafruit-Blinka",
+        "typing-extensions"
     ],
     # Choose your license
     license="MIT",
