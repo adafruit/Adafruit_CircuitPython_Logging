@@ -62,8 +62,14 @@ import sys
 from collections import namedtuple
 
 try:
-    from typing import Optional, Union
-    from io import TextIOWrapper, StringIO
+    from typing import Optional
+    from typing_extensions import Protocol
+
+    class WriteableStream(Protocol):
+
+        def write(self, buf: str) -> int:
+            ...
+
 except ImportError:
     pass
 
@@ -165,10 +171,12 @@ class StreamHandler(Handler):
     """Send logging messages to a stream, `sys.stderr` (typically
     the serial console) by default.
 
-    :param stream: The stream to log to, default is `sys.stderr`
+    :param stream: The stream to log to, default is `sys.stderr`;
+        can accept any stream that implements ``stream.write()``
+        with string inputs
     """
 
-    def __init__(self, stream: Optional[Union[TextIOWrapper, StringIO]] = None) -> None:
+    def __init__(self, stream: Optional[WriteableStream] = None) -> None:
         super().__init__()
         if stream is None:
             stream = sys.stderr
