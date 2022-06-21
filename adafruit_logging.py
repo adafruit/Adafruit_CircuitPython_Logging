@@ -63,6 +63,7 @@ from collections import namedtuple
 
 try:
     from typing import Optional
+
     try:
         from typing import Protocol
     except ImportError:
