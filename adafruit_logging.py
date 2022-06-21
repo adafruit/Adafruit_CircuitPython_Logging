@@ -63,10 +63,10 @@ from collections import namedtuple
 
 try:
     from typing import Optional
-   try:
-       from typing import Protocol
-   except ImportError:
-       from typing_extensions import Protocol
+    try:
+        from typing import Protocol
+    except ImportError:
+        from typing_extensions import Protocol
 
     class WriteableStream(Protocol):
         """Any stream that can ``write`` strings"""
