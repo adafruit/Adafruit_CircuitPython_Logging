@@ -62,8 +62,22 @@ import sys
 from collections import namedtuple
 
 try:
-    from typing import Optional, Union
-    from io import TextIOWrapper, StringIO
+    from typing import Optional
+
+    try:
+        from typing import Protocol
+    except ImportError:
+        from typing_extensions import Protocol
+
+    class WriteableStream(Protocol):
+        """Any stream that can ``write`` strings"""
+
+        def write(self, buf: str) -> int:
+            """Write to the stream
+
+            :param str buf: The string data to write to the stream
+            """
+
 except ImportError:
     pass
 
@@ -143,8 +157,7 @@ class Handler:
     def format(self, record: LogRecord) -> str:
         """Generate a timestamped message.
 
-        :param int log_level: the logging level
-        :param str message: the message to log
+        :param record: The record (message object) to be logged
         """
 
         return "{0:<0.3f}: {1} - {2}".format(
@@ -154,6 +167,8 @@ class Handler:
     def emit(self, record: LogRecord) -> None:
         """Send a message where it should go.
         Placeholder for subclass implementations.
+
+        :param record: The record (message object) to be logged
         """
 
         raise NotImplementedError()
@@ -164,10 +179,12 @@ class StreamHandler(Handler):
     """Send logging messages to a stream, `sys.stderr` (typically
     the serial console) by default.
 
-    :param stream: The stream to log to, default is `sys.stderr`
+    :param stream: The stream to log to, default is `sys.stderr`;
+        can accept any stream that implements ``stream.write()``
+        with string inputs
     """
 
-    def __init__(self, stream: Optional[Union[TextIOWrapper, StringIO]] = None) -> None:
+    def __init__(self, stream: Optional[WriteableStream] = None) -> None:
         super().__init__()
         if stream is None:
             stream = sys.stderr
@@ -177,8 +194,7 @@ class StreamHandler(Handler):
     def emit(self, record: LogRecord) -> None:
         """Send a message to the console.
 
-        :param int log_level: the logging level
-        :param str message: the message to log
+        :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
 
@@ -203,16 +219,14 @@ class FileHandler(StreamHandler):
     def format(self, record: LogRecord) -> str:
         """Generate a string to log
 
-        :param level: The level of the message
-        :param msg: The message to format
+        :param record: The record (message object) to be logged
         """
         return super().format(record) + "\r\n"
 
     def emit(self, record: LogRecord) -> None:
         """Generate the message and write it to the UART.
 
-        :param level: The level of the message
-        :param msg: The message to log
+        :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
 
@@ -286,7 +300,7 @@ class Logger:
         *NOTE* This is slightly different from the CPython equivalent
         which adds the handler rather than replacing it.
 
-        :param Handler hdlr: the handler
+        :param Handler hdlr: The handler to add
         """
         self._handler = hdlr
 
