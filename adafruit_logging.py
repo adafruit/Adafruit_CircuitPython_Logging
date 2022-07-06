@@ -196,7 +196,7 @@ class StreamHandler(Handler):
 
         :param record: The record (message object) to be logged
         """
-        self.stream.write(self.format(record))
+        self.stream.write(self.format(record) + "\n")
 
 
 class FileHandler(StreamHandler):
