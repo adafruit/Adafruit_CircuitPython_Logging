@@ -196,7 +196,7 @@ class StreamHandler(Handler):
 
         :param record: The record (message object) to be logged
         """
-        self.stream.write(self.format(record))
+        self.stream.write(self.format(record) + "\n")
 
 
 class FileHandler(StreamHandler):
@@ -248,7 +248,9 @@ logger_cache = {}
 def _addLogger(logger_name: str) -> None:
     """Adds the logger if it doesn't already exist"""
     if logger_name not in logger_cache:
-        logger_cache[logger_name] = Logger(logger_name)
+        new_logger = Logger(logger_name)
+        new_logger.addHandler(StreamHandler())
+        logger_cache[logger_name] = new_logger
 
 
 def getLogger(logger_name: str) -> "Logger":
