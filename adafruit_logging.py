@@ -38,9 +38,9 @@ Attributes
         level (00 to 50). The str in each tuple is the string representation of
         that logging level ("NOTSET" to "CRITICAL"; see below).
     NOTSET: int
-        The NOTSET logging level, which is a dummy logging level that can be
-        used to indicate that a `Logger` should not print any logging messages,
-        regardless of how severe those messages might be (including CRITICAL).
+        The NOTSET logging level, which is the default logging level that can be
+        used to indicate that a `Logger` should process any logging messages,
+        regardless of how severe those messages are.
     DEBUG: int
         The DEBUG logging level, which is the lowest (least severe) real level.
     INFO: int
