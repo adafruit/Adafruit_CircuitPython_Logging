@@ -31,25 +31,25 @@ Implementation Notes
 
 Attributes
 ----------
-    LEVELS : list
+    LEVELS: list
         A list of tuples representing the valid logging levels used by
         this module. Each tuple contains exactly two elements: one int and one
         str. The int in each tuple represents the relative severity of that
         level (00 to 50). The str in each tuple is the string representation of
         that logging level ("NOTSET" to "CRITICAL"; see below).
-    NOTSET : int
+    NOTSET: int
         The NOTSET logging level, which is a dummy logging level that can be
         used to indicate that a `Logger` should not print any logging messages,
         regardless of how severe those messages might be (including CRITICAL).
-    DEBUG : int
+    DEBUG: int
         The DEBUG logging level, which is the lowest (least severe) real level.
-    INFO : int
+    INFO: int
         The INFO logging level for informative/informational messages.
-    WARNING : int
+    WARNING: int
        The WARNING logging level for warnings that should be addressed/fixed.
-    ERROR : int
+    ERROR: int
         The ERROR logging level for Python exceptions that occur during runtime.
-    CRITICAL : int
+    CRITICAL: int
         The CRITICAL logging level, which is the highest (most severe) level for
         unrecoverable errors that have caused the code to halt and exit.
 
