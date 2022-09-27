@@ -62,12 +62,8 @@ import sys
 from collections import namedtuple
 
 try:
-    from typing import Optional
-
-    try:
-        from typing import Protocol
-    except ImportError:
-        from typing_extensions import Protocol
+    from typing import Optional, Hashable
+    from typing_extensions import Protocol
 
     class WriteableStream(Protocol):
         """Any stream that can ``write`` strings"""
