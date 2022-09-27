@@ -113,6 +113,8 @@ LEVELS = [
 for __value, __name in LEVELS:
     globals()[__name] = __value
 
+_ROOT_LOGGER_SENTINEL = object()
+
 
 def _level_for(value: int) -> str:
     """Convert a numeric level to the most appropriate name.
@@ -241,7 +243,7 @@ class NullHandler(Handler):
 logger_cache = {}
 
 
-def _addLogger(logger_name: str) -> None:
+def _addLogger(logger_name: Hashable) -> None:
     """Adds the logger if it doesn't already exist"""
     if logger_name not in logger_cache:
         new_logger = Logger(logger_name)
@@ -249,12 +251,14 @@ def _addLogger(logger_name: str) -> None:
         logger_cache[logger_name] = new_logger
 
 
-def getLogger(logger_name: str) -> "Logger":
+def getLogger(logger_name: Hashable = _ROOT_LOGGER_SENTINEL) -> "Logger":
     """Create or retrieve a logger by name; only retrieves loggers
     made using this function; if a Logger with this name does not
     exist it is created
 
-    :param str logger_name: The name of the `Logger` to create/retrieve.
+    :param Hashable logger_name: The name of the `Logger` to create/retrieve, this
+        is typically a ``str``.  If none is provided, the single root logger will
+        be created/retrieved.
     """
     _addLogger(logger_name)
     return logger_cache[logger_name]
@@ -263,12 +267,12 @@ def getLogger(logger_name: str) -> "Logger":
 class Logger:
     """The actual logger that will provide the logging API.
 
-    :param str name: The name of the logger, typically assigned by the
-        value from `getLogger`
+    :param Hashable name: The name of the logger, typically assigned by the
+        value from `getLogger`; this is typically a ``str``
     :param int level: (optional) The log level, default is ``NOTSET``
     """
 
-    def __init__(self, name: str, level: int = NOTSET) -> None:
+    def __init__(self, name: Hashable, level: int = NOTSET) -> None:
         """Create an instance."""
         self._level = level
         self.name = name
