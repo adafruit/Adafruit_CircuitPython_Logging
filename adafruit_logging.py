@@ -113,8 +113,6 @@ LEVELS = [
 for __value, __name in LEVELS:
     globals()[__name] = __value
 
-_ROOT_LOGGER_SENTINEL = object()
-
 
 def _level_for(value: int) -> str:
     """Convert a numeric level to the most appropriate name.
@@ -251,14 +249,15 @@ def _addLogger(logger_name: Hashable) -> None:
         logger_cache[logger_name] = new_logger
 
 
-def getLogger(logger_name: Hashable = _ROOT_LOGGER_SENTINEL) -> "Logger":
+def getLogger(logger_name: Hashable = "") -> "Logger":
     """Create or retrieve a logger by name; only retrieves loggers
     made using this function; if a Logger with this name does not
     exist it is created
 
     :param Hashable logger_name: The name of the `Logger` to create/retrieve, this
         is typically a ``str``.  If none is provided, the single root logger will
-        be created/retrieved.
+        be created/retrieved.  Note that unlike CPython, a blank string will also
+        access the root logger.
     """
     _addLogger(logger_name)
     return logger_cache[logger_name]
