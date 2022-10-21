@@ -45,8 +45,8 @@ Attributes
     INFO: int
         The INFO logging level for informative/informational messages.
     WARNING: int
-       The WARNING logging level, which is the default logging level, for warnings
-       that should be addressed/fixed.
+        The WARNING logging level, which is the default logging level, for warnings
+        that should be addressed/fixed.
     ERROR: int
         The ERROR logging level for Python exceptions that occur during runtime.
     CRITICAL: int
