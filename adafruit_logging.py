@@ -38,15 +38,15 @@ Attributes
         level (00 to 50). The str in each tuple is the string representation of
         that logging level ("NOTSET" to "CRITICAL"; see below).
     NOTSET: int
-        The NOTSET logging level, which is the default logging level that can be
-        used to indicate that a `Logger` should process any logging messages,
-        regardless of how severe those messages are.
+        The NOTSET logging level can be used to indicate that a `Logger` should
+        process any logging messages, regardless of how severe those messages are.
     DEBUG: int
         The DEBUG logging level, which is the lowest (least severe) real level.
     INFO: int
         The INFO logging level for informative/informational messages.
     WARNING: int
-       The WARNING logging level for warnings that should be addressed/fixed.
+        The WARNING logging level, which is the default logging level, for warnings
+        that should be addressed/fixed.
     ERROR: int
         The ERROR logging level for Python exceptions that occur during runtime.
     CRITICAL: int
@@ -268,10 +268,10 @@ class Logger:
 
     :param Hashable name: The name of the logger, typically assigned by the
         value from `getLogger`; this is typically a ``str``
-    :param int level: (optional) The log level, default is ``NOTSET``
+    :param int level: (optional) The log level, default is ``WARNING``
     """
 
-    def __init__(self, name: Hashable, level: int = NOTSET) -> None:
+    def __init__(self, name: Hashable, level: int = WARNING) -> None:
         """Create an instance."""
         self._level = level
         self.name = name
