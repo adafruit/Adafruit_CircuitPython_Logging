@@ -141,9 +141,9 @@ be retrieved from it:
 - ``args`` - The additional positional arguments provided
 """
 
-_logRecordFactory = lambda name, level, msg, args: LogRecord(
-    name, level, _level_for(level), msg, time.monotonic(), args
-)
+
+def _logRecordFactory(name, level, msg, args):
+    return LogRecord(name, level, _level_for(level), msg, time.monotonic(), args)
 
 
 class Handler:
