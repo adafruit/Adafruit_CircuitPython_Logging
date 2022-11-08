@@ -38,15 +38,15 @@ Attributes
         level (00 to 50). The str in each tuple is the string representation of
         that logging level ("NOTSET" to "CRITICAL"; see below).
     NOTSET: int
-        The NOTSET logging level, which is the default logging level that can be
-        used to indicate that a `Logger` should process any logging messages,
-        regardless of how severe those messages are.
+        The NOTSET logging level can be used to indicate that a `Logger` should
+        process any logging messages, regardless of how severe those messages are.
     DEBUG: int
         The DEBUG logging level, which is the lowest (least severe) real level.
     INFO: int
         The INFO logging level for informative/informational messages.
     WARNING: int
-       The WARNING logging level for warnings that should be addressed/fixed.
+        The WARNING logging level, which is the default logging level, for warnings
+        that should be addressed/fixed.
     ERROR: int
         The ERROR logging level for Python exceptions that occur during runtime.
     CRITICAL: int
@@ -62,12 +62,8 @@ import sys
 from collections import namedtuple
 
 try:
-    from typing import Optional
-
-    try:
-        from typing import Protocol
-    except ImportError:
-        from typing_extensions import Protocol
+    from typing import Optional, Hashable
+    from typing_extensions import Protocol
 
     class WriteableStream(Protocol):
         """Any stream that can ``write`` strings"""
@@ -246,7 +242,7 @@ class NullHandler(Handler):
 logger_cache = {}
 
 
-def _addLogger(logger_name: str) -> None:
+def _addLogger(logger_name: Hashable) -> None:
     """Adds the logger if it doesn't already exist"""
     if logger_name not in logger_cache:
         new_logger = Logger(logger_name)
@@ -254,12 +250,15 @@ def _addLogger(logger_name: str) -> None:
         logger_cache[logger_name] = new_logger
 
 
-def getLogger(logger_name: str) -> "Logger":
+def getLogger(logger_name: Hashable = "") -> "Logger":
     """Create or retrieve a logger by name; only retrieves loggers
     made using this function; if a Logger with this name does not
     exist it is created
 
-    :param str logger_name: The name of the `Logger` to create/retrieve.
+    :param Hashable logger_name: The name of the `Logger` to create/retrieve, this
+        is typically a ``str``.  If none is provided, the single root logger will
+        be created/retrieved.  Note that unlike CPython, a blank string will also
+        access the root logger.
     """
     _addLogger(logger_name)
     return logger_cache[logger_name]
@@ -268,12 +267,12 @@ def getLogger(logger_name: str) -> "Logger":
 class Logger:
     """The actual logger that will provide the logging API.
 
-    :param str name: The name of the logger, typically assigned by the
-        value from `getLogger`
-    :param int level: (optional) The log level, default is ``NOTSET``
+    :param Hashable name: The name of the logger, typically assigned by the
+        value from `getLogger`; this is typically a ``str``
+    :param int level: (optional) The log level, default is ``WARNING``
     """
 
-    def __init__(self, name: str, level: int = NOTSET) -> None:
+    def __init__(self, name: Hashable, level: int = WARNING) -> None:
         """Create an instance."""
         self._level = level
         self.name = name
