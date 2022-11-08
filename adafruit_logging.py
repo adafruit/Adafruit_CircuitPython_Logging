@@ -141,10 +141,9 @@ be retrieved from it:
 - ``args`` - The additional positional arguments provided
 """
 
+
 def _logRecordFactory(name, level, msg, args):
-    return LogRecord(
-        name, level, _level_for(level), msg, time.monotonic(), args
-    )
+    return LogRecord(name, level, _level_for(level), msg, time.monotonic(), args)
 
 
 class Handler:
