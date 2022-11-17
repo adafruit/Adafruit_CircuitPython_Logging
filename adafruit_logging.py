@@ -156,9 +156,7 @@ class Handler:
         :param record: The record (message object) to be logged
         """
 
-        return "{0:<0.3f}: {1} - {2}".format(
-            record.created, record.levelname, record.msg
-        )
+        return f"{record.created:<0.3f}: {record.levelname} - {record.msg}"
 
     def emit(self, record: LogRecord) -> None:
         """Send a message where it should go.
