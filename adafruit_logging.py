@@ -25,9 +25,8 @@ Implementation Notes
 .. note::
 
     This module has a few key differences compared to its CPython counterpart, notably
-    that loggers can only be assigned one handler at a time.  Calling ``addHander()``
-    replaces the currently stored handler for that logger.  Additionally, the default
-    formatting for handlers is different.
+    that loggers do not form a hierarchy that allows record propagation.
+    Additionally, the default formatting for handlers is different.
 
 Attributes
 ----------
@@ -275,7 +274,8 @@ class Logger:
         self.name = name
         """The name of the logger, this should be unique for proper
         functionality of `getLogger()`"""
-        self._handler = None
+        self._handlers = []
+        self.emittedNoHandlerWarning = False
 
     def setLevel(self, log_level: int) -> None:
         """Set the logging cutoff level.
@@ -294,23 +294,40 @@ class Logger:
         return self._level
 
     def addHandler(self, hdlr: Handler) -> None:
-        """Sets the handler of this logger to the specified handler.
-
-        *NOTE* This is slightly different from the CPython equivalent
-        which adds the handler rather than replacing it.
+        """Adds the handler to this logger.
 
         :param Handler hdlr: The handler to add
         """
-        self._handler = hdlr
+        self._handlers.append(hdlr)
+
+    def removeHandler(self, hdlr: Handler) -> None:
+        """Remove handler from this logger.
+
+        :param Handler hdlr: The handler to remove
+        """
+        self._handlers.remove(hdlr)
 
     def hasHandlers(self) -> bool:
         """Whether any handlers have been set for this logger"""
-        return self._handler is not None
+        return len(self._handlers) > 0
 
     def _log(self, level: int, msg: str, *args) -> None:
         record = _logRecordFactory(self.name, level, msg % args, args)
-        if self._handler and level >= self._level:
-            self._handler.emit(record)
+        self.handle(record)
+
+    def handle(self, record: LogRecord) -> None:
+        """Pass the record to all handlers registered with this logger.
+
+        :param LogRecord record: log record
+        """
+        if not self.hasHandlers() and not self.emittedNoHandlerWarning:
+            sys.stderr.write(f"Logger '{self.name}' has no handlers\n")
+            self.emittedNoHandlerWarning = True
+            return
+
+        if record.levelno >= self._level:
+            for handler in self._handlers:
+                handler.emit(record)
 
     def log(self, level: int, msg: str, *args) -> None:
         """Log a message.
