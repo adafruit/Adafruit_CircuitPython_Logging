@@ -140,10 +140,8 @@ be retrieved from it:
 - ``args`` - The additional positional arguments provided
 """
 
+# Whether to print exceptions caught during handler's emit().
 printHandlerExceptions = True
-"""
-Whether to print exceptions caught during handler's emit().
-"""
 
 
 def _logRecordFactory(name, level, msg, args):
@@ -347,8 +345,9 @@ class Logger:
                         handler.emit(record)
                     except Exception as e:  # pylint: disable=broad-except
                         if sys.stderr and printHandlerExceptions:
-                            sys.stderr.write(f"Handler {repr(handler)} produced exception: "
-                                             f"{str(e)}\n")
+                            sys.stderr.write(
+                                f"Handler {handler} produced exception: {e}\n"
+                            )
 
     def log(self, level: int, msg: str, *args) -> None:
         """Log a message.
