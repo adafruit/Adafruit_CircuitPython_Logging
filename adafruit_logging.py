@@ -146,7 +146,17 @@ def _logRecordFactory(name, level, msg, args):
 
 
 class Handler:
-    """Abstract logging message handler."""
+    """Base logging message handler."""
+
+    def __init__(self, level: int = NOTSET) -> None:
+        """Create Handler instance"""
+        self.level = level
+
+    def setLevel(self, level: int) -> None:
+        """
+        Set the logging level of this handler.
+        """
+        self.level = level
 
     # pylint: disable=no-self-use
     def format(self, record: LogRecord) -> str:
@@ -327,7 +337,8 @@ class Logger:
 
         if record.levelno >= self._level:
             for handler in self._handlers:
-                handler.emit(record)
+                if record.levelno >= handler.level:
+                    handler.emit(record)
 
     def log(self, level: int, msg: str, *args) -> None:
         """Log a message.
