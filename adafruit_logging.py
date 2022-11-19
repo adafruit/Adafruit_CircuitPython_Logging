@@ -140,6 +140,8 @@ be retrieved from it:
 - ``args`` - The additional positional arguments provided
 """
 
+raiseExceptions = False
+
 
 def _logRecordFactory(name, level, msg, args):
     return LogRecord(name, level, _level_for(level), msg, time.monotonic(), args)
@@ -338,7 +340,14 @@ class Logger:
         if record.levelno >= self._level:
             for handler in self._handlers:
                 if record.levelno >= handler.level:
-                    handler.emit(record)
+                    try:
+                        handler.emit(record)
+                    except Exception as e:  # pylint: disable=broad-except
+                        if raiseExceptions:
+                            raise e
+                        if sys.stderr:
+                            sys.stderr.write(f"Handler {handler} produced exception: "
+                                             f"{repr(e)}\n")
 
     def log(self, level: int, msg: str, *args) -> None:
         """Log a message.
