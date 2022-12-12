@@ -246,13 +246,13 @@ class NullHandler(Handler):
 
 
 logger_cache = {}
+_default_handler = StreamHandler()
 
 
 def _addLogger(logger_name: Hashable) -> None:
     """Adds the logger if it doesn't already exist"""
     if logger_name not in logger_cache:
         new_logger = Logger(logger_name)
-        new_logger.addHandler(StreamHandler())
         logger_cache[logger_name] = new_logger
 
 
@@ -330,15 +330,30 @@ class Logger:
 
         :param LogRecord record: log record
         """
-        if not self.hasHandlers() and not self.emittedNoHandlerWarning:
-            sys.stderr.write(f"Logger '{self.name}' has no handlers\n")
+        if (
+            _default_handler is None
+            and not self.hasHandlers()
+            and not self.emittedNoHandlerWarning
+        ):
+            sys.stderr.write(
+                f"Logger '{self.name}' has no handlers and default handler is None\n"
+            )
             self.emittedNoHandlerWarning = True
             return
 
+        emitted = False
         if record.levelno >= self._level:
             for handler in self._handlers:
                 if record.levelno >= handler.level:
                     handler.emit(record)
+                    emitted = True
+
+            if (
+                not emitted
+                and _default_handler
+                and record.levelno >= _default_handler.level
+            ):
+                _default_handler.emit(record)
 
     def log(self, level: int, msg: str, *args) -> None:
         """Log a message.
