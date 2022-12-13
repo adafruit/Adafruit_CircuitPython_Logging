@@ -3,6 +3,7 @@ MQTT logging handler - log records will be published as MQTT messages
 """
 
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
+
 # adafruit_logging defines log levels dynamically.
 # pylint: disable=no-name-in-module
 from adafruit_logging import NOTSET, Handler, LogRecord
@@ -12,6 +13,7 @@ class MQTTHandler(Handler):
     """
     Log handler that emits log records as MQTT PUBLISH messages.
     """
+
     def __init__(self, mqtt_client: MQTT.MQTT, topic: str) -> None:
         """
         Assumes that the MQTT client object is already connected.
