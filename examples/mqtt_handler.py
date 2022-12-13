@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022 vladak
+# SPDX-License-Identifier: Unlicense
 """
 MQTT logging handler - log records will be published as MQTT messages
 """

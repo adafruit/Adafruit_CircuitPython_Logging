@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2022 vladak
+# SPDX-License-Identifier: Unlicense
 """
 Demonstrate how to use a single logger to emit log records to
 both console and MQTT broker, in this case Adafruit IO.
