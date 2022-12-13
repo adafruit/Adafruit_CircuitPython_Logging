@@ -7,10 +7,10 @@ import json
 import socket
 import ssl
 
-import adafruit_logging as logging
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
-
 from mqtt_handler import MQTTHandler
+
+import adafruit_logging as logging
 
 logger = logging.getLogger(__name__)
 
