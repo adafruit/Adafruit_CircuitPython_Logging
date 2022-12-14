@@ -30,9 +30,13 @@ class MQTTHandler(Handler):
 
     def emit(self, record: LogRecord) -> None:
         """
-        Publish message from the LogRecord to the MQTT broker.
+        Publish message from the LogRecord to the MQTT broker, if connected.
         """
-        self._mqtt_client.publish(self._topic, record.msg)
+        try:
+            if self._mqtt_client.is_connected():
+                self._mqtt_client.publish(self._topic, record.msg)
+        except MQTT.MMQTTException:
+            pass
 
     # To make this work also in CPython's logging.
     def handle(self, record: LogRecord) -> None:
