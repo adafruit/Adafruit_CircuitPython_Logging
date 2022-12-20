@@ -12,6 +12,7 @@ import ssl
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 
 import adafruit_logging as logging
+
 # adafruit_logging defines log levels dynamically.
 # pylint: disable=no-name-in-module
 from adafruit_logging import NOTSET, Handler, LogRecord
