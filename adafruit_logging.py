@@ -187,6 +187,8 @@ class StreamHandler(Handler):
         with string inputs
     """
 
+    terminator = "\n"
+
     def __init__(self, stream: Optional[WriteableStream] = None) -> None:
         super().__init__()
         if stream is None:
@@ -199,7 +201,7 @@ class StreamHandler(Handler):
 
         :param record: The record (message object) to be logged
         """
-        self.stream.write(self.format(record) + "\n")
+        self.stream.write(self.format(record) + self.terminator)
 
 
 class FileHandler(StreamHandler):
