@@ -372,7 +372,7 @@ class Logger:
     def debug(self, msg: str, *args) -> None:
         """Log a debug message.
 
-        :param str fmsg: the core message string with embedded
+        :param str msg: the core message string with embedded
             formatting directives
         :param args: arguments to ``msg % args``;
             can be empty
