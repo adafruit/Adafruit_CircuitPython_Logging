@@ -324,7 +324,9 @@ class Logger:
         return len(self._handlers) > 0
 
     def _log(self, level: int, msg: str, *args) -> None:
-        record = _logRecordFactory(self.name, level, msg % args, args)
+        record = _logRecordFactory(
+            self.name, level, (msg % args) if args else msg, args
+        )
         self.handle(record)
 
     def handle(self, record: LogRecord) -> None:
