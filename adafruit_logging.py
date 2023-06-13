@@ -76,7 +76,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "0.0.0+auto.0"
+__version__ = "5.2.3"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
 
 # pylint:disable=undefined-all-variable
@@ -92,6 +92,7 @@ __all__ = [
     "StreamHandler",
     "logger_cache",
     "getLogger",
+    "useTimestamp",
     "Logger",
     "NullHandler",
     "FileHandler",
@@ -140,9 +141,26 @@ be retrieved from it:
 - ``args`` - The additional positional arguments provided
 """
 
+context = {"use_timestamp": False}
+
+
+def useTimestamp(new_value):
+    """
+    Whether to time.localtime() timestamp instead of time.monotonic() for the
+    emitted records.
+    """
+    context["use_timestamp"] = new_value
+
 
 def _logRecordFactory(name, level, msg, args):
-    return LogRecord(name, level, _level_for(level), msg, time.monotonic(), args)
+    return LogRecord(
+        name,
+        level,
+        _level_for(level),
+        msg,
+        time.monotonic() if not context["use_timestamp"] else time.localtime(),
+        args,
+    )
 
 
 class Handler:
@@ -164,6 +182,10 @@ class Handler:
 
         :param record: The record (message object) to be logged
         """
+
+        if context["use_timestamp"]:
+            # pylint: disable=line-too-long
+            return f"{record.created.tm_mon}/{record.created.tm_mday}/{record.created.tm_year - 2000} {record.created.tm_hour}:{record.created.tm_min}:{record.created.tm_sec}:{record.levelname}-{record.msg}"
 
         return f"{record.created:<0.3f}: {record.levelname} - {record.msg}"
 
