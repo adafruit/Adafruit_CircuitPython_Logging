@@ -201,7 +201,8 @@ class StreamHandler(Handler):
 
         :param record: The record (message object) to be logged
         """
-        self.stream.write(self.format(record) + self.terminator)
+        self.stream.write(self.format(record) 
+                          + self.terminator)
 
 
 class FileHandler(StreamHandler):
@@ -226,7 +227,7 @@ class FileHandler(StreamHandler):
 
         :param record: The record (message object) to be logged
         """
-        return super().format(record) + "\r\n"
+        return super().format( record) + "\r\n"
 
     def emit(self, record: LogRecord) -> None:
         """Generate the message and write it to the UART.
@@ -248,7 +249,7 @@ class NullHandler(Handler):
 
 
 logger_cache = {}
-_default_handler = StreamHandler()
+_default_handler = StreamHandler()    
 
 
 def _addLogger(logger_name: Hashable) -> None:
