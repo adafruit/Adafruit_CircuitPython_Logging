@@ -206,7 +206,10 @@ class StreamHandler(Handler):
 
 class FileHandler(StreamHandler):
     """File handler for working with log files off of the microcontroller (like
-    an SD card)
+    an SD card). This handler implements a very simple log rotating system. If LogFileSizeLimit
+    is set, the handler will check to see if the log file is larger than the given limit. If the
+    log file is larger than the limit, it will rename it to the filename with _old appended. If
+    a file with _old already exsists, it will be deleted.
 
     :param str filename: The filename of the log file
     :param str mode: Whether to write ('w') or append ('a'); default is to append
