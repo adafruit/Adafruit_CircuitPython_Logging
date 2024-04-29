@@ -215,17 +215,22 @@ class FileHandler(StreamHandler):
     :param str filename: The filename of the log file
     :param str mode: Whether to write ('w') or append ('a'); default is to append
     :param int LogFileSizeLimit: The max allowable size of the log file in bytes.
+    :param str OldFilePostfix: What to append to the filename for the old log file.
     """
 
     def __init__(
-        self, filename: str, mode: str = "a", LogFileSizeLimit: int = None
+        self,
+        filename: str,
+        mode: str = "a",
+        LogFileSizeLimit: int = None,
+        OldFilePostfix: str = "_old",
     ) -> None:
         if mode == "r":
             raise ValueError("Can't write to a read only file")
 
         self._LogFileName = filename
         self._WriteMode = mode
-        self._OldFilePostfix = "_old"  # TODO: Make this settable by the user?
+        self._OldFilePostfix = OldFilePostfix
         self._LogFileSizeLimit = LogFileSizeLimit
 
         # Here we are assuming that if there is a period in the filename, the stuff after the period
