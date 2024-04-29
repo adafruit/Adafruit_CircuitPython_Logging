@@ -61,6 +61,7 @@ import sys
 from collections import namedtuple
 
 try:
+    # pylint: disable=deprecated-class
     from typing import Optional, Hashable
     from typing_extensions import Protocol
 
@@ -216,65 +217,69 @@ class FileHandler(StreamHandler):
     :param int LogFileSizeLimit: The max allowable size of the log file in bytes.
     """
 
-    def __init__(self, filename: str, mode: str = "a", LogFileSizeLimit: int = None) -> None:
-        # pylint: disable=consider-using-with
-        if mode is 'r':
+    def __init__(
+        self, filename: str, mode: str = "a", LogFileSizeLimit: int = None
+    ) -> None:
+        if mode == "r":
             raise ValueError("Can't write to a read only file")
-        
+
         self._LogFileName = filename
         self._WriteMode = mode
-        self._OldFilePostfix = "_old"   #TODO: Make this settable by the user?
+        self._OldFilePostfix = "_old"  # TODO: Make this settable by the user?
         self._LogFileSizeLimit = LogFileSizeLimit
-        
-        #Here we are assuming that if there is a period in the filename, the stuff after the period
-        #is the extension of the file. It is possible that is not the case, but probably unlikely.
-        if '.' in filename:
+
+        # Here we are assuming that if there is a period in the filename, the stuff after the period
+        # is the extension of the file. It is possible that is not the case, but probably unlikely.
+        if "." in filename:
             [basefilename, extension] = filename.rsplit(".", 1)
             self._OldLogFileName = basefilename + self._OldFilePostfix + "." + extension
         else:
             basefilename = filename
             self._OldLogFileName = basefilename + self._OldFilePostfix
 
+        # pylint: disable=consider-using-with
         super().__init__(open(self._LogFileName, mode=self._WriteMode))
         self.CheckLogSize()
-        
+
     def CheckLogSize(self) -> None:
+        """Check the size of the log file and rotate if needed."""
         if self._LogFileSizeLimit is None:
-            #No log limit set
+            # No log limit set
             return
-        
-        #Close the log file. Probably needed if we want to delete/rename files.
+
+        # Close the log file. Probably needed if we want to delete/rename files.
         self.close()
-        
-        #Get the size of the log file.
+
+        # Get the size of the log file.
         try:
             LogFileSize = os.stat(self._LogFileName)[6]
         except OSError as e:
             if e.args[0] == 2:
-                #Log file does not exsist. This is okay.
+                # Log file does not exsist. This is okay.
                 LogFileSize = None
             else:
                 raise e
-                
-        #Get the size of the old log file.
+
+        # Get the size of the old log file.
         try:
             OldLogFileSize = os.stat(self._OldLogFileName)[6]
         except OSError as e:
             if e.args[0] == 2:
-                #Log file does not exsist. This is okay.
+                # Log file does not exsist. This is okay.
                 OldLogFileSize = None
             else:
                 raise e
-        
-        #This checks if the log file is too big. If so, it deletes the old log file and renames the
-        #log file to the old log filename.
+
+        # This checks if the log file is too big. If so, it deletes the old log file and renames the
+        # log file to the old log filename.
         if LogFileSize > self._LogFileSizeLimit:
             print("Rotating Logs")
             if OldLogFileSize is not None:
                 os.remove(self._OldLogFileName)
             os.rename(self._LogFileName, self._OldLogFileName)
-        
-        #Reopen the file.
+
+        # Reopen the file.
+        # pylint: disable=consider-using-with
         self.stream = open(self._LogFileName, mode=self._WriteMode)
 
     def close(self) -> None:
