@@ -58,6 +58,7 @@ Attributes
 
 import time
 import sys
+import os
 from collections import namedtuple
 
 try:
@@ -278,7 +279,6 @@ class FileHandler(StreamHandler):
         # This checks if the log file is too big. If so, it deletes the old log file and renames the
         # log file to the old log filename.
         if LogFileSize > self._LogFileSizeLimit:
-            print("Rotating Logs")
             if OldLogFileSize is not None:
                 os.remove(self._OldLogFileName)
             os.rename(self._LogFileName, self._OldLogFileName)
