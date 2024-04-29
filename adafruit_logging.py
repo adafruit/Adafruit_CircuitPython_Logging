@@ -207,16 +207,19 @@ class StreamHandler(Handler):
 
 
 class FileHandler(StreamHandler):
-    """File handler for working with log files off of the microcontroller (like
-    an SD card). This handler implements a very simple log rotating system. If LogFileSizeLimit
-    is set, the handler will check to see if the log file is larger than the given limit. If the
-    log file is larger than the limit, it will rename it to the filename with _old appended. If
-    a file with _old already exsists, it will be deleted.
+    """File handler for working with log files off of the microcontroller (like an SD card).
+    This handler implements a very simple log rotating system. If LogFileSizeLimit is set, the
+    handler will check to see if the log file is larger than the given limit. If the log file is
+    larger than the limit, it is renamed and a new file is started for log entries. The old log
+    file is renamed with the OldFilePostfix variable appended to the name. If another file exsists
+    with this old file name, it will be deleted. Because there are two log files. The max size of
+    the log files is two times the limit set by LogFileSizeLimit.
 
     :param str filename: The filename of the log file
     :param str mode: Whether to write ('w') or append ('a'); default is to append
     :param int LogFileSizeLimit: The max allowable size of the log file in bytes.
-    :param str OldFilePostfix: What to append to the filename for the old log file.
+    :param str OldFilePostfix: What to append to the filename for the old log file. Defaults
+        to '_old'.
     """
 
     def __init__(
