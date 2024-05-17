@@ -282,7 +282,6 @@ class RotatingFileHandler(FileHandler):
 
         # Open the file and save the handle to self.stream
         super().__init__(self._LogFileName, mode=self._WriteMode)
-        # TODO: What do we do if the log file already exsists?
 
     def doRollover(self) -> None:
         """Roll over the log files. This should not need to be called directly"""
@@ -316,8 +315,6 @@ class RotatingFileHandler(FileHandler):
 
     def GetLogSize(self) -> int:
         """Check the size of the log file."""
-        # TODO: Is this needed? I am catching the case where the file does not exsist,
-        #      but I don't know if that is a realistic case anymore.
         try:
             self.stream.flush()  # We need to call this or the file size is always zero.
             LogFileSize = os.stat(self._LogFileName)[6]
