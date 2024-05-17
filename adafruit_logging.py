@@ -208,88 +208,18 @@ class StreamHandler(Handler):
 
 
 class FileHandler(StreamHandler):
-    """File handler for working with log files off of the microcontroller (like an SD card).
-    This handler implements a very simple log rotating system. If LogFileSizeLimit is set, the
-    handler will check to see if the log file is larger than the given limit. If the log file is
-    larger than the limit, it is renamed and a new file is started for log entries. The old log
-    file is renamed with the OldFilePostfix variable appended to the name. If another file exsists
-    with this old file name, it will be deleted. Because there are two log files. The max size of
-    the log files is two times the limit set by LogFileSizeLimit.
+    """File handler for working with log files off of the microcontroller (like
+    an SD card)
 
     :param str filename: The filename of the log file
     :param str mode: Whether to write ('w') or append ('a'); default is to append
-    :param int LogFileSizeLimit: The max allowable size of the log file in bytes.
-    :param str OldFilePostfix: What to append to the filename for the old log file. Defaults
-        to '_old'.
     """
 
-    def __init__(
-        self,
-        filename: str,
-        mode: str = "a",
-        LogFileSizeLimit: int = None,
-        OldFilePostfix: str = "_old",
-    ) -> None:
+    def __init__(self, filename: str, mode: str = "a") -> None:
+        # pylint: disable=consider-using-with
         if mode == "r":
             raise ValueError("Can't write to a read only file")
-
-        self._LogFileName = filename
-        self._WriteMode = mode
-        self._OldFilePostfix = OldFilePostfix
-        self._LogFileSizeLimit = LogFileSizeLimit
-
-        # Here we are assuming that if there is a period in the filename, the stuff after the period
-        # is the extension of the file. It is possible that is not the case, but probably unlikely.
-        if "." in filename:
-            [basefilename, extension] = filename.rsplit(".", 1)
-            self._OldLogFileName = basefilename + self._OldFilePostfix + "." + extension
-        else:
-            basefilename = filename
-            self._OldLogFileName = basefilename + self._OldFilePostfix
-
-        # pylint: disable=consider-using-with
-        super().__init__(open(self._LogFileName, mode=self._WriteMode))
-        self.CheckLogSize()
-
-    def CheckLogSize(self) -> None:
-        """Check the size of the log file and rotate if needed."""
-        if self._LogFileSizeLimit is None:
-            # No log limit set
-            return
-
-        # Close the log file. Probably needed if we want to delete/rename files.
-        self.close()
-
-        # Get the size of the log file.
-        try:
-            LogFileSize = os.stat(self._LogFileName)[6]
-        except OSError as e:
-            if e.args[0] == 2:
-                # Log file does not exsist. This is okay.
-                LogFileSize = None
-            else:
-                raise e
-
-        # Get the size of the old log file.
-        try:
-            OldLogFileSize = os.stat(self._OldLogFileName)[6]
-        except OSError as e:
-            if e.args[0] == 2:
-                # Log file does not exsist. This is okay.
-                OldLogFileSize = None
-            else:
-                raise e
-
-        # This checks if the log file is too big. If so, it deletes the old log file and renames the
-        # log file to the old log filename.
-        if LogFileSize > self._LogFileSizeLimit:
-            if OldLogFileSize is not None:
-                os.remove(self._OldLogFileName)
-            os.rename(self._LogFileName, self._OldLogFileName)
-
-        # Reopen the file.
-        # pylint: disable=consider-using-with
-        self.stream = open(self._LogFileName, mode=self._WriteMode)
+        super().__init__(open(filename, mode=mode))
 
     def close(self) -> None:
         """Closes the file"""
@@ -304,11 +234,112 @@ class FileHandler(StreamHandler):
         return super().format(record) + "\r\n"
 
     def emit(self, record: LogRecord) -> None:
-        """Generate the message and write it to the UART.
+        """Generate the message and write it to the file.
 
         :param record: The record (message object) to be logged
         """
-        self.CheckLogSize()
+        self.stream.write(self.format(record))
+
+
+class RotatingFileHandler(FileHandler):
+    """File handler for writing log files to flash memory or external memory such as an SD card.
+    This handler implements a very simple log rotating system similar to the python function of the
+    same name (https://docs.python.org/3/library/logging.handlers.html#rotatingfilehandler)
+
+    If maxBytes is set, the handler will check to see if the log file is larger than the given
+    limit. If the log file is larger than the limit, it is renamed and a new file is started.
+    The old log file will be renamed with a numerical appendix '.1', '.2', etc... The variable
+    backupCount controls how many old log files to keep. For example, if the filename is 'log.txt'
+    and backupCount is 5, you will end up with six log files: 'log.txt', 'log.txt.1', 'log.txt.3',
+    up to 'log.txt.5' Therefore, the maximum amount of disk space the logs can use is
+    maxBytes*(backupCount+1).
+
+    If either maxBytes or backupCount is not set, or set to zero, the log rotation is disabled.
+    This will result in a single log file with a name `filename` that will grow without bound.
+
+    :param str filename: The filename of the log file
+    :param str mode: Whether to write ('w') or append ('a'); default is to append
+    :param int maxBytes: The max allowable size of the log file in bytes.
+    :param int backupCount: The number of old log files to keep.
+    """
+
+    def __init__(
+        self,
+        filename: str,
+        mode: str = "a",
+        maxBytes: int = 0,
+        backupCount: int = 0,
+    ) -> None:
+        if maxBytes < 0:
+            raise ValueError("maxBytes must be a positive number")
+        if backupCount < 0:
+            raise ValueError("backupCount must be a positive number")
+
+        self._LogFileName = filename
+        self._WriteMode = mode
+        self._maxBytes = maxBytes
+        self._backupCount = backupCount
+
+        # Open the file and save the handle to self.stream
+        super().__init__(self._LogFileName, mode=self._WriteMode)
+        # TODO: What do we do if the log file already exsists?
+
+    def doRollover(self) -> None:
+        """Roll over the log files. This should not need to be called directly"""
+        # At this point, we have already determined that we need to roll the log files.
+        # Close the log file. Probably needed if we want to delete/rename files.
+        self.close()
+
+        for i in range(self._backupCount, 0, -1):
+            CurrentFileName = self._LogFileName + "." + str(i)
+            CurrentFileNamePlus = self._LogFileName + "." + str(i + 1)
+            try:
+                if i == self._backupCount:
+                    # This is the oldest log file. Delete this one.
+                    os.remove(CurrentFileName)
+                else:
+                    # Rename the current file to the next number in the sequence.
+                    os.rename(CurrentFileName, CurrentFileNamePlus)
+            except OSError as e:
+                if e.args[0] == 2:
+                    # File does not exsist. This is okay.
+                    pass
+                else:
+                    raise e
+
+        # Rename the current log to the first backup
+        os.rename(self._LogFileName, CurrentFileName)
+
+        # Reopen the file.
+        # pylint: disable=consider-using-with
+        self.stream = open(self._LogFileName, mode=self._WriteMode)
+
+    def GetLogSize(self) -> int:
+        """Check the size of the log file."""
+        # TODO: Is this needed? I am catching the case where the file does not exsist,
+        #      but I don't know if that is a realistic case anymore.
+        try:
+            self.stream.flush()  # We need to call this or the file size is always zero.
+            LogFileSize = os.stat(self._LogFileName)[6]
+        except OSError as e:
+            if e.args[0] == 2:
+                # Log file does not exsist. This is okay.
+                LogFileSize = None
+            else:
+                raise e
+        return LogFileSize
+
+    def emit(self, record: LogRecord) -> None:
+        """Generate the message and write it to the file.
+
+        :param record: The record (message object) to be logged
+        """
+        if (
+            (self.GetLogSize() >= self._maxBytes)
+            and (self._maxBytes > 0)
+            and (self._backupCount > 0)
+        ):
+            self.doRollover()
         self.stream.write(self.format(record))
 
 
