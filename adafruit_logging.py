@@ -239,6 +239,7 @@ class FileHandler(StreamHandler):
         :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
+        self.stream.flush()
 
 
 class RotatingFileHandler(FileHandler):
@@ -338,6 +339,7 @@ class RotatingFileHandler(FileHandler):
         ):
             self.doRollover()
         self.stream.write(self.format(record))
+        self.stream.flush()
 
 
 class NullHandler(Handler):
