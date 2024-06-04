@@ -206,6 +206,12 @@ class StreamHandler(Handler):
         """
         self.stream.write(self.format(record) + self.terminator)
 
+    def flush(self) -> None:
+        """flush the stream. You might need to call this if your messages
+        are not appearing in the log file.
+        """
+        self.stream.flush()
+
 
 class FileHandler(StreamHandler):
     """File handler for working with log files off of the microcontroller (like
@@ -239,7 +245,6 @@ class FileHandler(StreamHandler):
         :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
-        self.stream.flush()
 
 
 class RotatingFileHandler(FileHandler):
@@ -339,7 +344,6 @@ class RotatingFileHandler(FileHandler):
         ):
             self.doRollover()
         self.stream.write(self.format(record))
-        self.stream.flush()
 
 
 class NullHandler(Handler):
