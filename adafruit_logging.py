@@ -179,6 +179,9 @@ class Handler:
 
         raise NotImplementedError()
 
+    def flush(self) -> None:
+        """Placeholder for flush function in subclasses."""
+
 
 #  pylint: disable=too-few-public-methods
 class StreamHandler(Handler):
@@ -414,6 +417,13 @@ class Logger:
         """
 
         return self._level
+
+    def flushHandlers(self) -> None:
+        """Flush all handlers. This will ensure that all data is immediately written to the streams.
+        This can be useful if you need to make sure the log is written before a reset.
+        """
+        for handlerName in self._handlers:
+            handlerName.flush()
 
     def addHandler(self, hdlr: Handler) -> None:
         """Adds the handler to this logger.
