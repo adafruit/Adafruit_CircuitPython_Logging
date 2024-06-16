@@ -179,6 +179,9 @@ class Handler:
 
         raise NotImplementedError()
 
+    def flush(self) -> None:
+        """Placeholder for flush function in subclasses."""
+
 
 #  pylint: disable=too-few-public-methods
 class StreamHandler(Handler):
@@ -205,6 +208,12 @@ class StreamHandler(Handler):
         :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record) + self.terminator)
+
+    def flush(self) -> None:
+        """flush the stream. You might need to call this if your messages
+        are not appearing in the log file.
+        """
+        self.stream.flush()
 
 
 class FileHandler(StreamHandler):
@@ -239,6 +248,7 @@ class FileHandler(StreamHandler):
         :param record: The record (message object) to be logged
         """
         self.stream.write(self.format(record))
+        self.stream.flush()
 
 
 class RotatingFileHandler(FileHandler):
@@ -338,6 +348,7 @@ class RotatingFileHandler(FileHandler):
         ):
             self.doRollover()
         self.stream.write(self.format(record))
+        self.stream.flush()
 
 
 class NullHandler(Handler):
