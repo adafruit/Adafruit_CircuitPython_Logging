@@ -202,6 +202,15 @@ class StreamHandler(Handler):
         self.stream = stream
         """The stream to log to"""
 
+    def format(self, record: LogRecord) -> str:
+        """Generate a string to log
+
+        :param record: The record (message object) to be logged
+        """
+        text = super().format(record)
+        lines = text.splitlines()
+        return self.terminator.join(lines) + self.terminator
+
     def emit(self, record: LogRecord) -> None:
         """Send a message to the console.
 
@@ -224,6 +233,8 @@ class FileHandler(StreamHandler):
     :param str mode: Whether to write ('w') or append ('a'); default is to append
     """
 
+    terminator = "\r\n"
+
     def __init__(self, filename: str, mode: str = "a") -> None:
         # pylint: disable=consider-using-with
         if mode == "r":
@@ -234,13 +245,6 @@ class FileHandler(StreamHandler):
         """Closes the file"""
         self.stream.flush()
         self.stream.close()
-
-    def format(self, record: LogRecord) -> str:
-        """Generate a string to log
-
-        :param record: The record (message object) to be logged
-        """
-        return super().format(record) + "\r\n"
 
     def emit(self, record: LogRecord) -> None:
         """Generate the message and write it to the file.
@@ -538,3 +542,27 @@ class Logger:
             can be empty
         """
         self._log(CRITICAL, msg, *args)
+
+    # pylint: disable=no-value-for-parameter; value and tb are optional for traceback
+    def exception(self, err: Exception) -> None:
+        """Convenience method for logging an ERROR with exception information.
+
+        :param Exception err: the exception to be logged
+        """
+        try:
+            # pylint: disable=import-outside-toplevel; not available on all boards
+            import traceback
+        except ImportError:
+            self._log(
+                ERROR,
+                "%s: %s (No traceback on this board)",
+                err.__class__.__name__,
+                str(err),
+            )
+        else:
+            lines = [str(err)] + traceback.format_exception(err)
+            lines = str(err) + "\n".join(lines)
+            # some of the returned strings from format_exception already have newlines in them,
+            # so we can't add the indent in the above line - needs to be done separately
+            lines = lines.replace("\n", "\n  ")
+            self._log(ERROR, lines)

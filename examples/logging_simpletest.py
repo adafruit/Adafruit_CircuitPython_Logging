@@ -25,7 +25,10 @@ assert logger.hasHandlers()
 logger.setLevel(logging.ERROR)
 logger.info("Stream Handler: Info message")
 logger.error("Stream Handler: Error message")
-
+try:
+    raise RuntimeError("Test exception handling")
+except RuntimeError as e:
+    logger.exception(e)
 # This should produce no output at all.
 
 null_logger = logging.getLogger("null")
@@ -36,3 +39,7 @@ assert null_logger.hasHandlers()
 null_logger.setLevel(logging.ERROR)
 null_logger.info("Null Handler: Info message")
 null_logger.error("Null Handler: Error message")
+try:
+    raise RuntimeError("Test exception handling")
+except RuntimeError as e:
+    null_logger.exception(e)
