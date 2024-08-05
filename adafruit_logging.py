@@ -148,12 +148,71 @@ def _logRecordFactory(name, level, msg, args):
     return LogRecord(name, level, _level_for(level), msg, time.monotonic(), args)
 
 
+class Formatter:
+    """
+    Responsible for converting a LogRecord to an output string to be
+    interpreted by a human or external system.
+
+    Only implements a sub-set of CPython logging.Formatter behavior,
+    but retains all the same arguments in order to match the API.
+
+    The only init arguments currently supported are: fmt and defaults.
+    All others are currently ignored
+
+    The only style value currently supported is '{'. CPython has support
+    for some others, but this implementation does not. Additionally, the
+    default value for style in this implementation is '{' whereas the default
+    style value in CPython is '%'
+    """
+
+    def __init__(  # pylint: disable=too-many-arguments
+        self, fmt=None, datefmt=None, style="{", validate=True, defaults=None
+    ):
+        self.fmt = fmt
+        self.datefmt = datefmt
+        self.style = style
+        if self.style != "{":
+            raise ValueError("Only '{' formatting sytle is supported at this time.")
+
+        self.validate = validate
+        self.defaults = defaults
+
+    def format(self, record: LogRecord) -> str:
+        """
+        Format the given LogRecord into an output string
+        """
+        if self.fmt is None:
+            return record.msg
+
+        vals = {
+            "name": record.name,
+            "levelno": record.levelno,
+            "levelname": record.levelname,
+            "message": record.msg,
+            "created": record.created,
+            "args": record.args,
+        }
+        if "{asctime}" in self.fmt:
+            now = time.localtime()
+            vals["asctime"] = (
+                f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} "
+                f"{now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
+            )
+
+        if self.defaults:
+            for key, val in self.defaults.items():
+                vals[key] = val
+
+        return self.fmt.format(**vals)
+
+
 class Handler:
     """Base logging message handler."""
 
     def __init__(self, level: int = NOTSET) -> None:
         """Create Handler instance"""
         self.level = level
+        self.formatter = None
 
     def setLevel(self, level: int) -> None:
         """
@@ -167,7 +226,8 @@ class Handler:
 
         :param record: The record (message object) to be logged
         """
-
+        if self.formatter:
+            return self.formatter.format(record)
         return f"{record.created:<0.3f}: {record.levelname} - {record.msg}"
 
     def emit(self, record: LogRecord) -> None:
@@ -181,6 +241,12 @@ class Handler:
 
     def flush(self) -> None:
         """Placeholder for flush function in subclasses."""
+
+    def setFormatter(self, formatter: Formatter) -> None:
+        """
+        Set the Formatter to be used by this Handler.
+        """
+        self.formatter = formatter
 
 
 #  pylint: disable=too-few-public-methods
