@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 
-"""Briefly exercise the logger and null logger."""
+"""Illustrate usage of default and custom Formatters including
+one with timestamps."""
 
 import adafruit_logging as logging
+
 # To test on CPython, un-comment below and comment out above
 # import logging
 
