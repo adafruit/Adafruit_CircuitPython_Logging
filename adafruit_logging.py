@@ -194,10 +194,10 @@ class Formatter:
         }
         if "{asctime}" in self.fmt:
             now = time.localtime()
-            vals["asctime"] = (
-                f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} "
-                f"{now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
-            )
+            # pylint: disable=line-too-long
+            vals[
+                "asctime"
+            ] = f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} {now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
 
         if self.defaults:
             for key, val in self.defaults.items():
