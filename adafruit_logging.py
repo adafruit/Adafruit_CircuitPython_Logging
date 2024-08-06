@@ -206,7 +206,8 @@ class Formatter:
 
         if self.defaults:
             for key, val in self.defaults.items():
-                vals[key] = val
+                if key not in vals:
+                    vals[key] = val
 
         if self.style not in ("{", "%"):
             raise ValueError(
