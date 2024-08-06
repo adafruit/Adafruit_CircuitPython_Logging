@@ -64,7 +64,7 @@ from collections import namedtuple
 
 try:
     # pylint: disable=deprecated-class
-    from typing import Optional, Hashable
+    from typing import Optional, Hashable, Dict
     from typing_extensions import Protocol
 
     class WriteableStream(Protocol):
@@ -156,23 +156,28 @@ class Formatter:
     Only implements a sub-set of CPython logging.Formatter behavior,
     but retains all the same arguments in order to match the API.
 
-    The only init arguments currently supported are: fmt and defaults.
-    All others are currently ignored
+    The only init arguments currently supported are: fmt, defaults and
+    style. All others are currently ignored
 
-    The only style value currently supported is '{'. CPython has support
-    for some others, but this implementation does not. Additionally, the
-    default value for style in this implementation is '{' whereas the default
-    style value in CPython is '%'
+    The only two styles currently supported are '%' and '{'. The default
+    style is '{'
     """
 
     def __init__(  # pylint: disable=too-many-arguments
-        self, fmt=None, datefmt=None, style="{", validate=True, defaults=None
+        self,
+        fmt: Optional[str] = None,
+        datefmt: Optional[str] = None,
+        style: str = "%",
+        validate: bool = True,
+        defaults: Dict = None,
     ):
         self.fmt = fmt
         self.datefmt = datefmt
         self.style = style
-        if self.style != "{":
-            raise ValueError("Only '{' formatting sytle is supported at this time.")
+        if self.style not in ("{", "%"):
+            raise ValueError(
+                "Only '%' and '{' formatting style are supported at this time."
+            )
 
         self.validate = validate
         self.defaults = defaults
@@ -192,7 +197,7 @@ class Formatter:
             "created": record.created,
             "args": record.args,
         }
-        if "{asctime}" in self.fmt:
+        if "{asctime}" in self.fmt or "%(asctime)s" in self.fmt:
             now = time.localtime()
             # pylint: disable=line-too-long
             vals[
@@ -202,6 +207,14 @@ class Formatter:
         if self.defaults:
             for key, val in self.defaults.items():
                 vals[key] = val
+
+        if self.style not in ("{", "%"):
+            raise ValueError(
+                "Only '%' and '{' formatting style are supported at this time."
+            )
+
+        if self.style == "%":
+            return self.fmt % vals
 
         return self.fmt.format(**vals)
 
