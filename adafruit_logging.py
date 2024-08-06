@@ -209,7 +209,7 @@ class StreamHandler(Handler):
         """
         text = super().format(record)
         lines = text.splitlines()
-        return self.terminator.join(lines) + self.terminator
+        return self.terminator.join(lines)
 
     def emit(self, record: LogRecord) -> None:
         """Send a message to the console.
@@ -561,7 +561,7 @@ class Logger:
             )
         else:
             lines = [str(err)] + traceback.format_exception(err)
-            lines = str(err) + "\n".join(lines)
+            lines = str(err) + "".join(lines)
             # some of the returned strings from format_exception already have newlines in them,
             # so we can't add the indent in the above line - needs to be done separately
             lines = lines.replace("\n", "\n  ")
