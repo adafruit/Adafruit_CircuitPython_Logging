@@ -200,9 +200,9 @@ class Formatter:
         if "{asctime}" in self.fmt or "%(asctime)s" in self.fmt:
             now = time.localtime()
             # pylint: disable=line-too-long
-            vals[
-                "asctime"
-            ] = f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} {now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
+            vals["asctime"] = (
+                f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} {now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
+            )
 
         if self.defaults:
             for key, val in self.defaults.items():
@@ -432,6 +432,7 @@ class RotatingFileHandler(FileHandler):
         ):
             self.doRollover()
         super().emit(record)
+
 
 class NullHandler(Handler):
     """Provide an empty log handler.
