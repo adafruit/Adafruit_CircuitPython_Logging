@@ -331,7 +331,7 @@ class FileHandler(StreamHandler):
 
         :param record: The record (message object) to be logged
         """
-        self.stream.write(self.format(record))
+        super().emit(record)
         self.stream.flush()
 
 
@@ -431,8 +431,7 @@ class RotatingFileHandler(FileHandler):
             and (self._backupCount > 0)
         ):
             self.doRollover()
-        self.stream.write(self.format(record))
-        self.stream.flush()
+        super().emit(record)
 
 
 class NullHandler(Handler):
