@@ -1,11 +1,12 @@
 # SPDX-FileCopyrightText: 2021 Alec Delaney
 # SPDX-License-Identifier: MIT
 
+import adafruit_sdcard
 import board
 import busio
-from digitalio import DigitalInOut
 import storage
-import adafruit_sdcard
+from digitalio import DigitalInOut
+
 import adafruit_logging as logging
 from adafruit_logging import FileHandler
 
