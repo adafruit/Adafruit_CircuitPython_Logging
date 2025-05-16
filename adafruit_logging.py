@@ -55,16 +55,14 @@ Attributes
 
 """
 
-# pylint: disable=invalid-name,undefined-variable
-
-import time
-import sys
 import os
+import sys
+import time
 from collections import namedtuple
 
 try:
-    # pylint: disable=deprecated-class
-    from typing import Optional, Hashable, Dict
+    from typing import Dict, Hashable, Optional
+
     from typing_extensions import Protocol
 
     class WriteableStream(Protocol):
@@ -82,7 +80,6 @@ except ImportError:
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Logger.git"
 
-# pylint:disable=undefined-all-variable
 __all__ = [
     "LEVELS",
     "NOTSET",
@@ -129,9 +126,7 @@ def _level_for(value: int) -> str:
     return LEVELS[0][1]
 
 
-LogRecord = namedtuple(
-    "_LogRecord", ("name", "levelno", "levelname", "msg", "created", "args")
-)
+LogRecord = namedtuple("_LogRecord", ("name", "levelno", "levelname", "msg", "created", "args"))
 """An object used to hold the contents of a log record.  The following attributes can
 be retrieved from it:
 
@@ -163,7 +158,7 @@ class Formatter:
     style is '{'
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         fmt: Optional[str] = None,
         datefmt: Optional[str] = None,
@@ -174,10 +169,8 @@ class Formatter:
         self.fmt = fmt
         self.datefmt = datefmt
         self.style = style
-        if self.style not in ("{", "%"):
-            raise ValueError(
-                "Only '%' and '{' formatting style are supported at this time."
-            )
+        if self.style not in {"{", "%"}:
+            raise ValueError("Only '%' and '{' formatting style are supported at this time.")
 
         self.validate = validate
         self.defaults = defaults
@@ -199,20 +192,17 @@ class Formatter:
         }
         if "{asctime}" in self.fmt or "%(asctime)s" in self.fmt:
             now = time.localtime()
-            # pylint: disable=line-too-long
-            vals[
-                "asctime"
-            ] = f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} {now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
+            vals["asctime"] = (
+                f"{now.tm_year}-{now.tm_mon:02d}-{now.tm_mday:02d} {now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"  # noqa: E501
+            )
 
         if self.defaults:
             for key, val in self.defaults.items():
                 if key not in vals:
                     vals[key] = val
 
-        if self.style not in ("{", "%"):
-            raise ValueError(
-                "Only '%' and '{' formatting style are supported at this time."
-            )
+        if self.style not in {"{", "%"}:
+            raise ValueError("Only '%' and '{' formatting style are supported at this time.")
 
         if self.style == "%":
             return self.fmt % vals
@@ -234,7 +224,6 @@ class Handler:
         """
         self.level = level
 
-    # pylint: disable=no-self-use
     def format(self, record: LogRecord) -> str:
         """Generate a timestamped message.
 
@@ -263,7 +252,6 @@ class Handler:
         self.formatter = formatter
 
 
-#  pylint: disable=too-few-public-methods
 class StreamHandler(Handler):
     """Send logging messages to a stream, `sys.stderr` (typically
     the serial console) by default.
@@ -316,7 +304,6 @@ class FileHandler(StreamHandler):
     terminator = "\r\n"
 
     def __init__(self, filename: str, mode: str = "a") -> None:
-        # pylint: disable=consider-using-with
         if mode == "r":
             raise ValueError("Can't write to a read only file")
         super().__init__(open(filename, mode=mode))
@@ -404,7 +391,6 @@ class RotatingFileHandler(FileHandler):
         os.rename(self._LogFileName, CurrentFileName)
 
         # Reopen the file.
-        # pylint: disable=consider-using-with
         self.stream = open(self._LogFileName, mode=self._WriteMode)
 
     def GetLogSize(self) -> int:
@@ -522,9 +508,7 @@ class Logger:
         return len(self._handlers) > 0
 
     def _log(self, level: int, msg: str, *args) -> None:
-        record = _logRecordFactory(
-            self.name, level, (msg % args) if args else msg, args
-        )
+        record = _logRecordFactory(self.name, level, (msg % args) if args else msg, args)
         self.handle(record)
 
     def handle(self, record: LogRecord) -> None:
@@ -532,14 +516,8 @@ class Logger:
 
         :param LogRecord record: log record
         """
-        if (
-            _default_handler is None
-            and not self.hasHandlers()
-            and not self.emittedNoHandlerWarning
-        ):
-            sys.stderr.write(
-                f"Logger '{self.name}' has no handlers and default handler is None\n"
-            )
+        if _default_handler is None and not self.hasHandlers() and not self.emittedNoHandlerWarning:
+            sys.stderr.write(f"Logger '{self.name}' has no handlers and default handler is None\n")
             self.emittedNoHandlerWarning = True
             return
 
@@ -550,11 +528,7 @@ class Logger:
                     handler.emit(record)
                     emitted = True
 
-            if (
-                not emitted
-                and _default_handler
-                and record.levelno >= _default_handler.level
-            ):
+            if not emitted and _default_handler and record.levelno >= _default_handler.level:
                 _default_handler.emit(record)
 
     def log(self, level: int, msg: str, *args) -> None:
@@ -622,14 +596,12 @@ class Logger:
         """
         self._log(CRITICAL, msg, *args)
 
-    # pylint: disable=no-value-for-parameter; value and tb are optional for traceback
     def exception(self, err: Exception) -> None:
         """Convenience method for logging an ERROR with exception information.
 
         :param Exception err: the exception to be logged
         """
         try:
-            # pylint: disable=import-outside-toplevel; not available on all boards
             import traceback
         except ImportError:
             self._log(

@@ -34,9 +34,7 @@ print_handler.setFormatter(custom_vals_formatter)
 logger.info("Custom formatter example")
 
 
-bracket_timestamp_formatter = logging.Formatter(
-    fmt="{asctime} {levelname}: {message}", style="{"
-)
+bracket_timestamp_formatter = logging.Formatter(fmt="{asctime} {levelname}: {message}", style="{")
 print_handler.setFormatter(bracket_timestamp_formatter)
 logger.info("Timestamp formatter bracket style example")
 
