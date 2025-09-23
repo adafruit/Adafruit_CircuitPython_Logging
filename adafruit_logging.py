@@ -617,3 +617,51 @@ class Logger:
             # so we can't add the indent in the above line - needs to be done separately
             lines = lines.replace("\n", "\n  ")
             self._log(ERROR, lines)
+
+def critical(msg, *args, **kwargs):
+    """
+    Log a message with severity 'CRITICAL' on the root logger.
+    """
+    getLogger().critical(msg, *args, **kwargs)
+
+def fatal(msg, *args, **kwargs):
+    """
+    Don't use this function, use critical() instead.
+    """
+    critical(msg, *args, **kwargs)
+
+def error(msg, *args, **kwargs):
+    """
+    Log a message with severity 'ERROR' on the root logger.
+    """
+    getLogger().error(msg, *args, **kwargs)
+
+def warning(msg, *args, **kwargs):
+    """
+    Log a message with severity 'WARNING' on the root logger.
+    """
+    getLogger().warning(msg, *args, **kwargs)
+
+def warn(msg, *args, **kwargs):
+    """
+    Don't use this function, use warning() instead.
+    """
+    warning(msg, *args, **kwargs)
+
+def info(msg, *args, **kwargs):
+    """
+    Log a message with severity 'INFO' on the root logger.
+    """
+    getLogger().info(msg, *args, **kwargs)
+
+def debug(msg, *args, **kwargs):
+    """
+    Log a message with severity 'DEBUG' on the root logger.
+    """
+    getLogger().debug(msg, *args, **kwargs)
+
+def log(level, msg, *args, **kwargs):
+    """
+    Log 'msg % args' with the integer severity 'level' on the root logger.
+    """
+    getLogger().log(level, msg, *args, **kwargs)
