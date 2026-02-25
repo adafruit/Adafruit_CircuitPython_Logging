@@ -100,17 +100,23 @@ __all__ = [
 
 # The level module-global variables get created when loaded
 
-LEVELS = [
-    (00, "NOTSET"),
-    (10, "DEBUG"),
-    (20, "INFO"),
-    (30, "WARNING"),
-    (40, "ERROR"),
-    (50, "CRITICAL"),
-]
+CRITICAL: int = 50
+FATAL = CRITICAL
+ERROR: int = 40
+WARNING: int = 30
+WARN = WARNING
+INFO: int = 20
+DEBUG: int = 10
+NOTSET: int = 0
 
-for __value, __name in LEVELS:
-    globals()[__name] = __value
+LEVELS = [
+    (NOTSET, "NOTSET"),
+    (DEBUG, "DEBUG"),
+    (INFO, "INFO"),
+    (WARNING, "WARNING"),
+    (ERROR, "ERROR"),
+    (CRITICAL, "CRITICAL"),
+]
 
 
 def _level_for(value: int) -> str:
@@ -164,7 +170,7 @@ class Formatter:
         datefmt: Optional[str] = None,
         style: str = "%",
         validate: bool = True,
-        defaults: Dict = None,
+        defaults=None,
     ):
         self.fmt = fmt
         self.datefmt = datefmt
@@ -263,7 +269,7 @@ class StreamHandler(Handler):
 
     terminator = "\n"
 
-    def __init__(self, stream: Optional[WriteableStream] = None) -> None:
+    def __init__(self, stream: WriteableStream | None = None) -> None:
         super().__init__()
         if stream is None:
             stream = sys.stderr
@@ -393,7 +399,7 @@ class RotatingFileHandler(FileHandler):
         # Reopen the file.
         self.stream = open(self._LogFileName, mode=self._WriteMode)
 
-    def GetLogSize(self) -> int:
+    def GetLogSize(self) -> int | None:
         """Check the size of the log file."""
         try:
             self.stream.flush()  # We need to call this or the file size is always zero.
@@ -411,8 +417,10 @@ class RotatingFileHandler(FileHandler):
 
         :param record: The record (message object) to be logged
         """
+        logsize: int | None = self.GetLogSize()
         if (
-            (self.GetLogSize() >= self._maxBytes)
+            (logsize is not None)
+            and (logsize >= self._maxBytes)
             and (self._maxBytes > 0)
             and (self._backupCount > 0)
         ):
