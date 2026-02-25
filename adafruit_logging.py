@@ -55,6 +55,7 @@ Attributes
 
 """
 
+import errno
 import os
 import sys
 import time
@@ -387,7 +388,7 @@ class RotatingFileHandler(FileHandler):
                     # Rename the current file to the next number in the sequence.
                     os.rename(CurrentFileName, CurrentFileNamePlus)
             except OSError as e:
-                if e.args[0] == 2:
+                if e.errno == errno.ENOENT:
                     # File does not exsist. This is okay.
                     pass
                 else:
@@ -405,7 +406,7 @@ class RotatingFileHandler(FileHandler):
             self.stream.flush()  # We need to call this or the file size is always zero.
             LogFileSize = os.stat(self._LogFileName)[6]
         except OSError as e:
-            if e.args[0] == 2:
+            if e.errno == errno.ENOENT:
                 # Log file does not exsist. This is okay.
                 LogFileSize = None
             else:
